@@ -221,7 +221,8 @@
       amount = `<span class="sec">${Number(item.score_total).toFixed(3)}</span>`;
     }
     const sub = [item.subtitle, when].filter(Boolean).join(" · ");
-    const inner = `<div class="l"><div class="t">${tokenLink({ symbol: item.title, url: item.url, mint: item.mint })}</div>
+    // The whole row is already a link; a nested <a> would break the layout.
+    const inner = `<div class="l"><div class="t">${escapeHtml(item.title)}</div>
       <div class="s">${escapeHtml(sub)}</div></div>
       <div class="r">${amount}${pct}</div>`;
     if (item.url) {
