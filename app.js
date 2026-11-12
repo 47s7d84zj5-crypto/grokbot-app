@@ -9,6 +9,7 @@
     query: "",
     activityFilter: "notable",
     error: false,
+    token: null,
   };
 
   const $ = (sel) => document.querySelector(sel);
@@ -17,6 +18,7 @@
     agents: $("#view-agents"),
     activity: $("#view-activity"),
     account: $("#view-account"),
+    token: $("#view-token"),
   };
 
   function dataUrl() {
@@ -197,6 +199,16 @@
 
   function activityRow(item) {
     const when = clock(item.ts);
+    if (item.position_id) {
+      const tone = item.amount_tone || "";
+      const note = item.note ? `<small class="${escapeHtml(tone)}">${escapeHtml(item.note)}</small>` : "";
+      const sub = [item.subtitle, when].filter(Boolean).join(" · ");
+      return `<button type="button" class="li tap" data-pos="${escapeHtml(item.position_id)}">
+        <div class="l"><div class="t">${escapeHtml(item.title)}</div><div class="s">${escapeHtml(sub)}</div></div>
+        <div class="r"><span class="${escapeHtml(tone)}">${escapeHtml(item.amount_text || "")}</span>${note}</div>
+        <span class="chev">›</span>
+      </button>`;
+    }
     let amount = "";
     let pct = "";
     if (item.kind === "bought" && item.size_sol != null) {
@@ -216,6 +228,152 @@
       return `<a class="li" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${inner}</a>`;
     }
     return `<div class="li">${inner}</div>`;
+  }
+
+  function fmtMc(n) {
+    if (n == null || !Number.isFinite(Number(n)) || Number(n) <= 0) return "—";
+    const v = Number(n);
+    if (v >= 1e6) return `$${(v / 1e6).toFixed(2)}M`;
+    if (v >= 1e3) return `$${(v / 1e3).toFixed(1)}K`;
+    return `$${v.toFixed(0)}`;
+  }
+
+  function fmtAge(sec) {
+    if (sec == null) return "—";
+    const s = Math.max(0, Math.round(sec));
+    if (s < 3600) return `${Math.floor(s / 60)}m`;
+    if (s < 86400) return `${Math.floor(s / 3600)}h ${Math.floor((s % 3600) / 60)}m`;
+    return `${Math.floor(s / 86400)}d ${Math.floor((s % 86400) / 3600)}h`;
+  }
+
+  function allPositions(data) {
+    return [...(data.open_positions || []), ...(data.closed_positions || [])];
+  }
+
+  function positionCard(p) {
+    const ch = p.change_pct;
+    const cls = ch == null ? "sec" : ch >= 0 ? "up" : "dn";
+    const status = p.open ? "Open" : "Closed";
+    return `<button type="button" class="li tap" data-pos="${escapeHtml(p.id)}">
+      <div class="l"><div class="t">${escapeHtml(p.symbol)} <span class="pill ${p.open ? "on" : ""}">${status}</span></div>
+        <div class="s">${escapeHtml(fmtSol(p.size_sol, 4))} · entry ${escapeHtml(fmtMc(p.entry_mc_usd))} MC · ${escapeHtml(clock(p.opened_at))}</div></div>
+      <div class="r"><span class="${cls}">${ch == null ? "—" : fmtPct(ch)}</span><small>${escapeHtml(fmtMc(p.last_mc_usd))} MC</small></div>
+      <span class="chev">›</span>
+    </button>`;
+  }
+
+  const MARK_COLORS = { entry: "#0a84ff", partial: "#ffd60a", trail: "#ff9f0a", stop: "#ff453a", exit: "#00d35a" };
+
+  function mcChartSvg(p) {
+    const pts = (p.mc_history || []).filter((x) => x && x[1] > 0);
+    const W = 358;
+    const H = 200;
+    const padT = 14;
+    const padB = 22;
+    if (pts.length < 2) {
+      return `<div class="tchart empty-chart">${
+        p.open ? "Collecting market cap samples… the chart fills in as the tracker polls (about every 20 s)." : "No market cap samples were recorded for this position."
+      }</div>`;
+    }
+    const marks = (p.markers || []).filter((m) => m.t);
+    const ts = pts.map((x) => x[0]).concat(marks.map((m) => m.t));
+    const t0 = Math.min(...ts);
+    const t1 = Math.max(...ts);
+    const vals = pts.map((x) => x[1]).concat(marks.map((m) => m.mc_usd).filter((v) => v > 0));
+    let lo = Math.min(...vals);
+    let hi = Math.max(...vals);
+    const pad = (hi - lo) * 0.08 || hi * 0.05 || 1;
+    lo -= pad;
+    hi += pad;
+    const x = (t) => ((t - t0) / (t1 - t0 || 1)) * W;
+    const y = (v) => padT + (1 - (v - lo) / (hi - lo || 1)) * (H - padT - padB);
+    const line = pts.map((q, i) => `${i ? "L" : "M"}${x(q[0]).toFixed(1)},${y(q[1]).toFixed(1)}`).join("");
+    const last = pts[pts.length - 1];
+    const up = last[1] >= (p.entry_mc_usd || pts[0][1]);
+    const col = up ? "#00d35a" : "#ff453a";
+    const area = `${line}L${x(last[0]).toFixed(1)},${H - padB}L${x(pts[0][0]).toFixed(1)},${H - padB}Z`;
+    const nearest = (t) => pts.reduce((b, q) => (Math.abs(q[0] - t) < Math.abs(b[0] - t) ? q : b), pts[0])[1];
+    const entryY = p.entry_mc_usd ? y(p.entry_mc_usd) : null;
+    const markSvg = marks
+      .map((m) => {
+        const mx = x(m.t);
+        const my = y(m.mc_usd > 0 ? m.mc_usd : nearest(m.t));
+        const c = MARK_COLORS[m.kind] || "#fff";
+        return `<line x1="${mx.toFixed(1)}" x2="${mx.toFixed(1)}" y1="${padT}" y2="${H - padB}" stroke="${c}" stroke-opacity="0.35" stroke-dasharray="3 4"/>
+          <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="5" fill="${c}" stroke="#000" stroke-width="2"/>`;
+      })
+      .join("");
+    const tl = (t) => new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Budapest", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(t * 1000));
+    return `<svg class="tchart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Market cap since entry">
+      <defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity="0.25"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
+      <path d="${area}" fill="url(#tg)"/>
+      ${entryY != null ? `<line x1="0" x2="${W}" y1="${entryY.toFixed(1)}" y2="${entryY.toFixed(1)}" stroke="#0a84ff" stroke-opacity="0.5" stroke-dasharray="4 6"/>` : ""}
+      <path d="${line}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/>
+      ${markSvg}
+      <text x="2" y="${H - 6}" fill="rgba(235,235,245,0.5)" font-size="11">${tl(t0)}</text>
+      <text x="${W - 2}" y="${H - 6}" fill="rgba(235,235,245,0.5)" font-size="11" text-anchor="end">${tl(t1)}</text>
+      <text x="${W - 2}" y="12" fill="rgba(235,235,245,0.5)" font-size="11" text-anchor="end">${fmtMc(hi)}</text>
+    </svg>`;
+  }
+
+  function renderToken(data) {
+    const p = allPositions(data).find((x) => x.id === state.token);
+    const back = `<div class="tback"><button type="button" id="tok-back">‹ Back</button></div>`;
+    if (!p) {
+      views.token.innerHTML = `${back}<div class="empty">This position is not in the latest snapshot.</div>`;
+    } else {
+      const ch = p.change_pct;
+      const cls = ch == null ? "sec" : ch >= 0 ? "up" : "dn";
+      const since = p.open ? "since bought" : "final result";
+      const legend = (p.markers || [])
+        .map((m) => `<span class="lg"><i style="background:${MARK_COLORS[m.kind] || "#fff"}"></i>${escapeHtml(m.label)}${m.t ? ` · ${escapeHtml(clock(new Date(m.t * 1000).toISOString()))}` : ""}</span>`)
+        .join("");
+      const exits = (p.exits || []).length
+        ? (p.exits || [])
+            .map((e) => `<div class="prop"><span class="k">${escapeHtml(clock(e.at))} · ${escapeHtml(e.final ? "Exit" : "Partial")} · ${escapeHtml(e.reason_label)}</span>
+              <span class="v ${e.pnl_sol >= 0 ? "up" : "dn"}">${e.pnl_sol >= 0 ? "+" : ""}${Number(e.pnl_sol).toFixed(4)} SOL${e.pnl_pct != null ? ` · ${fmtPct(e.pnl_pct)}` : ""}</span></div>`)
+            .join("")
+        : `<div class="sec" style="font-size:15px">No exits yet. The bot's own risk rules decide when to sell.</div>`;
+      const scores = p.scores || {};
+      const scoreRows = ["audit", "narrative", "timing", "metrics", "total"]
+        .filter((k) => scores[k] != null)
+        .map((k) => `<div class="prop"><span class="k">${k[0].toUpperCase() + k.slice(1)}</span><span class="v">${Number(scores[k]).toFixed(3)}</span></div>`)
+        .join("");
+      const icon = p.icon ? `<img class="ticon" src="${escapeHtml(p.icon)}" alt="" referrerpolicy="no-referrer">` : `<div class="ticon ph">${escapeHtml((p.symbol || "?").slice(0, 1))}</div>`;
+      views.token.innerHTML = `${back}
+        <div class="thead">${icon}<div><div class="tsym">${escapeHtml(p.symbol)}</div><div class="sec" style="font-size:15px">${escapeHtml(p.name || "")}</div></div>
+          <span class="paper" style="margin-left:auto">DRY-RUN</span></div>
+        <div class="tbig ${cls}">${ch == null ? "—" : fmtPct(ch)} <small class="sec">${since}</small></div>
+        <div class="sol-line">MC ${escapeHtml(fmtMc(p.last_mc_usd))} · entry ${escapeHtml(fmtMc(p.entry_mc_usd))} · age ${escapeHtml(fmtAge(p.age_seconds))}</div>
+        <div class="tchartwrap">${mcChartSvg(p)}</div>
+        <div class="legend">${legend}</div>
+        <div class="card"><h4>Position</h4>
+          <div class="prop"><span class="k">Status</span><span class="v">${p.open ? "Open" : "Closed"}</span></div>
+          <div class="prop"><span class="k">Bought</span><span class="v">${escapeHtml(clock(p.opened_at))} (Europe/Budapest)</span></div>
+          <div class="prop"><span class="k">Size</span><span class="v">${escapeHtml(fmtSol(p.size_sol, 4))}${p.size_usd != null ? ` · ${escapeHtml(fmtUsd(p.size_usd))}` : ""}</span></div>
+          <div class="prop"><span class="k">Entry MC</span><span class="v">${escapeHtml(fmtMc(p.entry_mc_usd))}</span></div>
+          <div class="prop"><span class="k">Realized PnL</span><span class="v ${p.realized_sol >= 0 ? "up" : "dn"}">${p.realized_sol >= 0 ? "+" : ""}${Number(p.realized_sol || 0).toFixed(4)} SOL</span></div>
+          <div class="prop"><span class="k">Score</span><span class="v">${p.score != null ? Number(p.score).toFixed(3) : "—"}</span></div>
+        </div>
+        <div class="card"><h4>Exits</h4>${exits}</div>
+        ${scoreRows ? `<div class="card"><h4>Agent scores</h4>${scoreRows}</div>` : ""}
+        ${p.checker || p.narrative ? `<div class="card"><h4>Why it was bought</h4><p class="sec" style="margin:0;font-size:15px;line-height:1.45">${escapeHtml(p.narrative || "")} ${escapeHtml(p.checker || "")}</p></div>` : ""}
+        <div class="card"><a href="${escapeHtml(p.url || "#")}" target="_blank" rel="noopener" style="color:var(--blue)">Open on pump.fun ›</a></div>`;
+    }
+    $("#tok-back").addEventListener("click", () => closeToken());
+  }
+
+  function openToken(id) {
+    state.prevTab = state.tab === "token" ? state.prevTab : state.tab;
+    state.token = id;
+    if (location.hash !== `#token=${encodeURIComponent(id)}`) history.pushState(null, "", `#token=${encodeURIComponent(id)}`);
+    setTab("token");
+  }
+
+  function closeToken() {
+    state.token = null;
+    if (location.hash.startsWith("#token=")) history.pushState(null, "", location.pathname + location.search);
+    setTab(state.prevTab || "home");
   }
 
   function renderHome(data) {
@@ -259,6 +417,8 @@
       <div class="ranges">${ranges}</div>
       <div class="sech">Agents · ${data.agents_running} running</div>
       <div class="car">${agents}</div>
+      <div class="sech">Positions</div>
+      ${positionsBlock(data)}
       <div class="sech">Activity <button type="button" data-go="activity">See all</button></div>
       ${activity}
     `;
@@ -273,6 +433,15 @@
     views.home.querySelectorAll("[data-go]").forEach((btn) => {
       btn.addEventListener("click", () => setTab(btn.getAttribute("data-go")));
     });
+  }
+
+  function positionsBlock(data) {
+    const open = data.open_positions || [];
+    const closed = (data.closed_positions || []).slice(0, 3);
+    if (!open.length && !closed.length) {
+      return `<div class="list"><div class="empty">No simulated positions yet. The bot buys only when a token scores at least 0.65 and passes the checker and risk gate; tap a trade here once it does.</div></div>`;
+    }
+    return `<div class="list">${open.concat(closed).map(positionCard).join("")}</div>`;
   }
 
   function renderAgents(data) {
@@ -369,9 +538,12 @@
     if (state.tab === "agents") renderAgents(data);
     if (state.tab === "activity") renderActivity(data);
     if (state.tab === "account") renderAccount(data);
+    if (state.tab === "token") renderToken(data);
+    $("#demo-banner").classList.toggle("hidden", !data.demo);
   }
 
   function setTab(tab) {
+    if (tab !== "token") state.token = null;
     state.tab = tab;
     Object.entries(views).forEach(([name, el]) => el.classList.toggle("on", name === tab));
     document.querySelectorAll("#tabs button").forEach((btn) => {
@@ -411,6 +583,28 @@
     state.query = ev.target.value;
     render();
   });
+
+  document.addEventListener("click", (ev) => {
+    const el = ev.target.closest("[data-pos]");
+    if (el) {
+      ev.preventDefault();
+      openToken(el.getAttribute("data-pos"));
+    }
+  });
+  function routeFromHash() {
+    const m = location.hash.match(/^#token=(.+)$/);
+    if (m) {
+      state.prevTab = state.prevTab || "home";
+      state.token = decodeURIComponent(m[1]);
+      state.tab = "token";
+      Object.entries(views).forEach(([name, el]) => el.classList.toggle("on", name === "token"));
+      render();
+    } else if (state.tab === "token") {
+      closeToken();
+    }
+  }
+  window.addEventListener("popstate", routeFromHash);
+  routeFromHash();
 
   refresh();
   setInterval(refresh, REFRESH_MS);

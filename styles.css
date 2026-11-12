@@ -332,6 +332,26 @@ main {
 .agent-full { background: var(--c1); border-radius: 20px; margin: 0 var(--g) 12px; padding: 18px; }
 .note { font-size: 13px; color: var(--sec); padding: 8px var(--g) 0; line-height: 1.45; }
 .hidden { display: none !important; }
+button.li { width: 100%; text-align: left; color: inherit; font: inherit; background: none; border: 0; }
+.li.tap { cursor: pointer; }
+.li .chev { color: var(--ter); font-size: 22px; margin-left: -4px; }
+.pill { font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 6px; background: var(--c2); color: var(--sec); vertical-align: 2px; }
+.pill.on { background: rgba(0, 211, 90, 0.16); color: var(--green); }
+#demo-banner { background: var(--orange); color: #000; text-align: center; font: 700 13px var(--text); padding: 6px var(--g); letter-spacing: 0.4px; }
+.tback { padding: 6px 8px 0; }
+.tback button { color: var(--blue); font-size: 17px; min-height: 44px; padding: 0 8px; }
+.thead { display: flex; align-items: center; gap: 12px; padding: 4px var(--g) 0; }
+.ticon { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: var(--c2); }
+.ticon.ph { display: flex; align-items: center; justify-content: center; font: 700 20px var(--disp); }
+.tsym { font: 700 28px/1.1 var(--disp); }
+.tbig { font: 700 40px/1.1 var(--disp); padding: 12px var(--g) 0; letter-spacing: -0.8px; }
+.tbig small { font: 400 15px var(--text); letter-spacing: 0; }
+.tchartwrap { padding: 12px var(--g) 6px; }
+.tchart { display: block; width: 100%; height: 200px; }
+.empty-chart { display: flex; align-items: center; justify-content: center; text-align: center; color: var(--sec); font-size: 15px; background: var(--c1); border-radius: 16px; padding: 0 20px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 4px var(--g) 14px; font-size: 13px; color: var(--sec); }
+.legend .lg { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
