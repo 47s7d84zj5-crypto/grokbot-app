@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T22:53:11.568806+01:00",
+  "generated_at": "2026-11-12T22:56:37.833599+01:00",
   "timezone": "Europe/Budapest",
   "mode": "dry-run",
   "label": "simulated / dry-run",
@@ -7,8 +7,8 @@
   "monitor_connected": true,
   "starting_balance_sol": 10.0,
   "balance_sol": 10.0,
-  "balance_usd": 815.0,
-  "sol_usd": 81.5,
+  "balance_usd": 814.6,
+  "sol_usd": 81.46,
   "realized_sol": 0.0,
   "unrealized_sol": 0.0,
   "pnl_today_sol": 0.0,
@@ -20,92 +20,92 @@
     "LIVE": {
       "points": [
         {
-          "t": 1794519491.568806,
+          "t": 1794519697.833599,
           "v": 10.0
         },
         {
-          "t": 1794520391.568806,
+          "t": 1794520597.833599,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794519491.568806,
-      "to": 1794520391.568806
+      "from": 1794519697.833599,
+      "to": 1794520597.833599
     },
     "1H": {
       "points": [
         {
-          "t": 1794516791.568806,
+          "t": 1794516997.833599,
           "v": 10.0
         },
         {
-          "t": 1794520391.568806,
+          "t": 1794520597.833599,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794516791.568806,
-      "to": 1794520391.568806
+      "from": 1794516997.833599,
+      "to": 1794520597.833599
     },
     "4H": {
       "points": [
         {
-          "t": 1794505991.568806,
+          "t": 1794506197.833599,
           "v": 10.0
         },
         {
-          "t": 1794520391.568806,
+          "t": 1794520597.833599,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794505991.568806,
-      "to": 1794520391.568806
+      "from": 1794506197.833599,
+      "to": 1794520597.833599
     },
     "1D": {
       "points": [
         {
-          "t": 1794433991.568806,
+          "t": 1794434197.833599,
           "v": 10.0
         },
         {
-          "t": 1794520391.568806,
+          "t": 1794520597.833599,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794433991.568806,
-      "to": 1794520391.568806
+      "from": 1794434197.833599,
+      "to": 1794520597.833599
     },
     "1W": {
       "points": [
         {
-          "t": 1793915591.568806,
+          "t": 1793915797.833599,
           "v": 10.0
         },
         {
-          "t": 1794520391.568806,
+          "t": 1794520597.833599,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1793915591.568806,
-      "to": 1794520391.568806
+      "from": 1793915797.833599,
+      "to": 1794520597.833599
     },
     "ALL": {
       "points": [
         {
-          "t": 1794520391.568806,
+          "t": 1794520597.833599,
           "v": 10.0
         },
         {
-          "t": 1794520391.568806,
+          "t": 1794520597.833599,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794520391.568806,
-      "to": 1794520391.568806
+      "from": 1794520597.833599,
+      "to": 1794520597.833599
     }
   },
   "agents": [
@@ -115,9 +115,16 @@
       "maps_to": "Monitor",
       "running": true,
       "accent": "cyan",
-      "headline": "479 tokens",
-      "sub": "18 waiting · 420 skipped",
+      "headline": "480 tokens",
+      "sub": "19 waiting · 421 skipped",
       "items": [
+        {
+          "symbol": "STARSHIP",
+          "detail": "3 traders",
+          "tone": "wait",
+          "url": null,
+          "mint": null
+        },
         {
           "symbol": "X",
           "detail": "4 traders",
@@ -148,7 +155,7 @@
         },
         {
           "symbol": "H20",
-          "detail": "3 traders",
+          "detail": "4 traders",
           "tone": "wait",
           "url": null,
           "mint": null
@@ -161,15 +168,8 @@
           "mint": null
         },
         {
-          "symbol": "STARSHIP",
-          "detail": "3 traders",
-          "tone": "wait",
-          "url": null,
-          "mint": null
-        },
-        {
-          "symbol": "STARSHIP",
-          "detail": "3 traders",
+          "symbol": "CONNECT",
+          "detail": "1 trader",
           "tone": "wait",
           "url": null,
           "mint": null
@@ -530,6 +530,27 @@
   ],
   "agents_running": 8,
   "activity": [
+    {
+      "ts": "2026-11-12T22:56:01.449523+01:00",
+      "ts_unix": 1794520561.4495232,
+      "type": "skip",
+      "symbol": "DcZnqiwV",
+      "mint": "DcZnqiwVbAeFqv2JksYWZKk156Ww1Wd8aYhcz5MfLoat",
+      "url": "https://pump.fun/coin/DcZnqiwVbAeFqv2JksYWZKk156Ww1Wd8aYhcz5MfLoat",
+      "stage": "monitor",
+      "stage_label": "Scanner",
+      "reason": "no_metadata",
+      "reason_label": "no metadata",
+      "detail": null,
+      "score_total": null,
+      "scores": null,
+      "size_sol": null,
+      "pnl_sol": null,
+      "pnl_pct": null,
+      "kind": "skipped",
+      "title": "Skipped DcZnqiwV",
+      "subtitle": "Scanner · no metadata"
+    },
     {
       "ts": "2026-11-12T22:52:46.578040+01:00",
       "ts_unix": 1794520366.5780401,
@@ -4744,27 +4765,6 @@
       "kind": "skipped",
       "title": "Skipped SADASDASDA",
       "subtitle": "Scanner · timed out, no traction"
-    },
-    {
-      "ts": "2026-11-12T22:21:58.330670+01:00",
-      "ts_unix": 1794518518.3306704,
-      "type": "skip",
-      "symbol": "ALLINU",
-      "mint": "2fdtM5zkmEy511hyLUeRgVWNHQpC8b54oi8keNAGjpot",
-      "url": "https://pump.fun/coin/2fdtM5zkmEy511hyLUeRgVWNHQpC8b54oi8keNAGjpot",
-      "stage": "monitor",
-      "stage_label": "Scanner",
-      "reason": "stale_no_traction",
-      "reason_label": "timed out, no traction",
-      "detail": null,
-      "score_total": null,
-      "scores": null,
-      "size_sol": null,
-      "pnl_sol": null,
-      "pnl_pct": null,
-      "kind": "skipped",
-      "title": "Skipped ALLINU",
-      "subtitle": "Scanner · timed out, no traction"
     }
   ],
   "home_activity": [
@@ -4953,23 +4953,31 @@
   "closed_positions": [],
   "balance_history": [
     {
-      "t": 1794520391.568806,
+      "t": 1794520597.833599,
       "sol": 10.0,
-      "usd": 815.0
+      "usd": 814.6
     },
     {
-      "t": 1794520391.568806,
+      "t": 1794520597.833599,
       "sol": 10.0,
-      "usd": 815.0
+      "usd": 814.6
     }
   ],
   "waiting": [
+    {
+      "symbol": "STARSHIP",
+      "mint": null,
+      "prefix": "bUEcRrqU",
+      "traders": 3,
+      "ts": "2026-11-12T22:56:25+01:00",
+      "url": null
+    },
     {
       "symbol": "X",
       "mint": null,
       "prefix": "5xxJmJxh",
       "traders": 4,
-      "ts": "2026-11-12T22:53:11+01:00",
+      "ts": "2026-11-12T22:56:11+01:00",
       "url": null
     },
     {
@@ -4977,7 +4985,7 @@
       "mint": null,
       "prefix": "9xEpFAd4",
       "traders": 3,
-      "ts": "2026-11-12T22:53:11+01:00",
+      "ts": "2026-11-12T22:56:11+01:00",
       "url": null
     },
     {
@@ -4985,7 +4993,7 @@
       "mint": null,
       "prefix": "4qFMbxqa",
       "traders": 3,
-      "ts": "2026-11-12T22:53:11+01:00",
+      "ts": "2026-11-12T22:56:11+01:00",
       "url": null
     },
     {
@@ -4993,15 +5001,15 @@
       "mint": null,
       "prefix": "61RYTHTx",
       "traders": 2,
-      "ts": "2026-11-12T22:53:11+01:00",
+      "ts": "2026-11-12T22:56:11+01:00",
       "url": null
     },
     {
       "symbol": "H20",
       "mint": null,
       "prefix": "J5S8ocDu",
-      "traders": 3,
-      "ts": "2026-11-12T22:52:57+01:00",
+      "traders": 4,
+      "ts": "2026-11-12T22:56:01+01:00",
       "url": null
     },
     {
@@ -5009,15 +5017,15 @@
       "mint": null,
       "prefix": "sL3836bv",
       "traders": 3,
-      "ts": "2026-11-12T22:52:57+01:00",
+      "ts": "2026-11-12T22:56:01+01:00",
       "url": null
     },
     {
-      "symbol": "STARSHIP",
+      "symbol": "CONNECT",
       "mint": null,
-      "prefix": "bUEcRrqU",
-      "traders": 3,
-      "ts": "2026-11-12T22:52:45+01:00",
+      "prefix": "Fm7JUDw8",
+      "traders": 1,
+      "ts": "2026-11-12T22:56:01+01:00",
       "url": null
     },
     {
@@ -5111,13 +5119,13 @@
   ],
   "grok_calls_today": 33,
   "kpis": {
-    "tokens_watched": 479,
-    "events": 479,
+    "tokens_watched": 480,
+    "events": 480,
     "passed_monitor": 59,
     "buys": 0,
     "closes": 0,
-    "skips": 479,
-    "today_events": 479
+    "skips": 480,
+    "today_events": 480
   },
   "reasons": [
     {
@@ -5126,7 +5134,7 @@
     },
     {
       "label": "no metadata",
-      "count": 72
+      "count": 73
     },
     {
       "label": "curve too thin",
