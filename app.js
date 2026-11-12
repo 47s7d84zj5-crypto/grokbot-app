@@ -2,25 +2,56 @@
   const REFRESH_MS = 45000;
   const RANGES = ["LIVE", "1H", "4H", "1D", "1W", "ALL"];
 
-  const state = {
-    data: null,
-    tab: "home",
-    range: "LIVE",
-    query: "",
-    activityFilter: "notable",
-    error: false,
-    token: null,
-  };
-
+  const state = { data: null, tab: "home", range: "LIVE", query: "", activityFilter: "notable", error: false, token: null, prevTab: "home", shownBalance: null };
   const $ = (sel) => document.querySelector(sel);
-  const views = {
-    home: $("#view-home"),
-    agents: $("#view-agents"),
-    activity: $("#view-activity"),
-    account: $("#view-account"),
-    token: $("#view-token"),
+  const views = { home: $("#view-home"), agents: $("#view-agents"), activity: $("#view-activity"), account: $("#view-account"), token: $("#view-token") };
+
+  // ---- icons (Lucide-style, inline, stroke = currentColor) ---------------
+  const P = {
+    bot: '<rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 8V4"/><circle cx="12" cy="3" r="1"/><path d="M9 13v1M15 13v1M2 14h2M20 14h2"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+    home: '<path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/>',
+    cpu: '<rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>',
+    activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+    radar: '<path d="M19.07 4.93A10 10 0 1 0 22 12"/><path d="M16.24 7.76A6 6 0 1 0 18 12"/><circle cx="12" cy="12" r="2"/><path d="m13.4 10.6 6-6"/>',
+    flask: '<path d="M9 3h6M10 3v6L4.5 18.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.5L14 9V3"/><path d="M7 15h10"/>',
+    shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+    brain: '<path d="M9.5 2A2.5 2.5 0 0 0 7 4.5v.5a3 3 0 0 0-3 3 3 3 0 0 0 .5 5A3 3 0 0 0 7 19a2.5 2.5 0 0 0 5 .5V4.5A2.5 2.5 0 0 0 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 1 17 4.5v.5a3 3 0 0 1 3 3 3 3 0 0 1-.5 5A3 3 0 0 1 17 19a2.5 2.5 0 0 1-5 .5"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    alert: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+    gauge: '<path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/>',
+    chart: '<path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-7"/>',
+    zap: '<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',
+    arrowIn: '<path d="M17 7 7 17"/><path d="M17 17H7V7"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    octagon: '<path d="M7.9 2h8.2L22 7.9v8.2L16.1 22H7.9L2 16.1V7.9z"/><path d="M8 12h8"/>',
+    x: '<path d="M18 6 6 18M6 6l12 12"/>',
+    trend: '<path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/>',
+    trendDown: '<path d="m22 17-8.5-8.5-5 5L2 7"/><path d="M16 17h6v-6"/>',
+    chevL: '<path d="m15 18-6-6 6-6"/>',
+    chevR: '<path d="m9 18 6-6-6-6"/>',
+    share: '<path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 6-4-4-4 4M12 2v13"/>',
+    wallet: '<path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+    eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    layers: '<path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/>',
+    target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+    coins: '<circle cx="8" cy="8" r="6"/><path d="M18.1 10.4A6 6 0 1 1 10.3 18"/><path d="M7 6h1v4"/>',
+    link: '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
+    hourglass: '<path d="M5 22h14M5 2h14M17 22v-4.2a2 2 0 0 0-.6-1.4L12 12l-4.4 4.4a2 2 0 0 0-.6 1.4V22M7 2v4.2a2 2 0 0 0 .6 1.4L12 12l4.4-4.4a2 2 0 0 0 .6-1.4V2"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/>',
+  };
+  const ico = (name) => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${P[name] || P.info}</svg>`;
+  const fillIcons = (root) => root.querySelectorAll("[data-ico]").forEach((el) => { if (!el.firstChild) el.innerHTML = ico(el.getAttribute("data-ico")); });
+
+  const AGENT_STYLE = {
+    scanner: ["radar", "#4fd8ff"], analyzer: ["flask", "#3d8bff"], auditor: ["shield", "#22e07a"],
+    narrative: ["brain", "#a77bff"], timing: ["clock", "#ff9f0a"], checker: ["alert", "#ffd43b"],
+    risk: ["gauge", "#ff4d5e"], executor: ["zap", "#22e07a"],
   };
 
+  // ---- formatting ---------------------------------------------------------
   function dataUrl() {
     const path = location.pathname;
     let dir;
@@ -29,216 +60,20 @@
     else dir = path + "/";
     return `${dir}data.json?t=${Date.now()}`;
   }
-
-  function fmtSol(n, digits = 4) {
-    if (n == null || Number.isNaN(n)) return "—";
-    const sign = n > 0 && digits >= 0 ? "" : "";
-    return `${sign}${Number(n).toFixed(digits)} SOL`;
-  }
-
+  const fmtSol = (n, d = 4) => (n == null || Number.isNaN(Number(n)) ? "—" : `${Number(n).toFixed(d)} SOL`);
   function fmtUsd(n) {
-    if (n == null || Number.isNaN(n)) return null;
-    const abs = Math.abs(n);
-    const body = abs.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    return `${n < 0 ? "-" : ""}$${body}`;
+    if (n == null || Number.isNaN(Number(n))) return null;
+    const abs = Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return `${n < 0 ? "-" : ""}$${abs}`;
   }
-
-  function fmtPct(n) {
-    return `${n >= 0 ? "+" : ""}${Number(n).toFixed(2)}%`;
-  }
-
-  function clock(iso) {
-    if (!iso) return "";
-    return new Intl.DateTimeFormat("en-GB", {
-      timeZone: "Europe/Budapest",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }).format(new Date(iso));
-  }
-
-  function escapeHtml(s) {
-    return String(s ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  }
-
-  function tokenLink(item) {
-    const name = escapeHtml(item.symbol || item.mint || "token");
-    if (!item.url && !item.mint) return name;
-    const href = item.url || `https://pump.fun/coin/${item.mint}`;
-    return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${name}</a>`;
-  }
-
-  function matchesQuery(text) {
-    const q = state.query.trim().toLowerCase();
-    if (!q) return true;
-    return String(text || "").toLowerCase().includes(q);
-  }
-
-  function drawChart(canvas, series, hasTrades) {
-    if (!canvas) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const width = canvas.clientWidth || canvas.parentElement.clientWidth || 390;
-    const height = 220;
-    canvas.width = Math.round(width * dpr);
-    canvas.height = Math.round(height * dpr);
-    const ctx = canvas.getContext("2d");
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, width, height);
-
-    const padX = 0;
-    const padTop = 16;
-    const padBot = 12;
-    const points = (series && series.points) || [];
-    const values = hasTrades ? points.map((p) => p.v) : [10, 10];
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-    const span = max - min || 1;
-    const times = hasTrades && points.length ? points.map((p) => p.t) : [0, 1];
-    const t0 = Math.min(...times);
-    const t1 = Math.max(...times);
-    const tspan = t1 - t0 || 1;
-
-    const xAt = (t) => padX + ((t - t0) / tspan) * (width - padX * 2);
-    const yAt = (v) => padTop + (1 - (v - min) / span) * (height - padTop - padBot);
-    const baseline = yAt(hasTrades ? values[0] : values[0]);
-
-    // Subtle green glow baseline
-    const grad = ctx.createLinearGradient(0, 0, 0, height);
-    grad.addColorStop(0, "rgba(0,211,90,0.18)");
-    grad.addColorStop(1, "rgba(0,211,90,0)");
-
-    ctx.beginPath();
-    if (hasTrades && points.length >= 2) {
-      points.forEach((p, i) => {
-        const x = xAt(p.t);
-        const y = yAt(p.v);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-      ctx.strokeStyle = "#00d35a";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      const first = points[0];
-      const last = points[points.length - 1];
-      ctx.lineTo(xAt(last.t), height);
-      ctx.lineTo(xAt(first.t), height);
-      ctx.closePath();
-      ctx.fillStyle = grad;
-      ctx.fill();
-    } else {
-      ctx.beginPath();
-      ctx.moveTo(0, baseline);
-      ctx.lineTo(width, baseline);
-      ctx.strokeStyle = "#00d35a";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.lineTo(width, height);
-      ctx.lineTo(0, height);
-      ctx.closePath();
-      ctx.fillStyle = grad;
-      ctx.fill();
-    }
-
-    ctx.setLineDash([4, 6]);
-    ctx.strokeStyle = "rgba(0,211,90,0.35)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(0, baseline);
-    ctx.lineTo(width, baseline);
-    ctx.stroke();
-    ctx.setLineDash([]);
-  }
-
-  function gaugeSvg(value) {
-    const v = value == null ? 0 : Math.max(0, Math.min(1, Number(value)));
-    const r = 38;
-    const c = 2 * Math.PI * r;
-    const dash = c * v;
-    const color = v >= 0.5 ? "#00d35a" : v > 0 ? "#ff9f0a" : "#ff453a";
-    return `<svg class="ringc" viewBox="0 0 92 92" aria-hidden="true">
-      <circle cx="46" cy="46" r="${r}" fill="none" stroke="#2c2c2e" stroke-width="8"/>
-      <circle cx="46" cy="46" r="${r}" fill="none" stroke="${color}" stroke-width="8"
-        stroke-linecap="round" stroke-dasharray="${dash} ${c}"
-        transform="rotate(-90 46 46)"/>
-      <text x="46" y="51" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">${
-        value == null ? "—" : Number(value).toFixed(2)
-      }</text>
-    </svg>`;
-  }
-
-  function feedRows(items) {
-    if (!items || !items.length) return "";
-    return `<div class="feed">${items
-      .slice(0, 5)
-      .map((row) => {
-        const tone = row.tone || "";
-        return `<div class="frow ${escapeHtml(tone)}">
-          <span class="l">${tokenLink(row)}</span>
-          <span class="r">${escapeHtml(row.detail || "")}</span>
-        </div>`;
-      })
-      .join("")}</div>`;
-  }
-
-  function agentCard(agent, compact) {
-    const running = agent.running ? "" : "off";
-    const empty = agent.empty && !(agent.items && agent.items.length)
-      ? `<div class="empty" style="padding:18px 0 8px">${escapeHtml(agent.empty)}</div>`
-      : feedRows(agent.items || []);
-    const gauge = agent.kind === "gauge" ? `<div class="gauge-row">${gaugeSvg(agent.gauge)}<div class="sub">${escapeHtml(agent.sub || "")}</div></div>` : "";
-    const head = agent.kind === "gauge" ? "" : `<div class="head">${escapeHtml(agent.headline || "—")}</div><div class="sub">${escapeHtml(agent.sub || "")}</div>`;
-    return `<article class="${compact ? "acard" : "agent-full"}">
-      <div class="nm ${escapeHtml(agent.accent || "")}"><i class="${running}"></i> ${escapeHtml(agent.name)}</div>
-      ${head}${gauge}${empty}
-    </article>`;
-  }
-
-  function activityRow(item) {
-    const when = clock(item.ts);
-    if (item.position_id) {
-      const tone = item.amount_tone || "";
-      const note = item.note ? `<small class="${escapeHtml(tone)}">${escapeHtml(item.note)}</small>` : "";
-      const sub = [item.subtitle, when].filter(Boolean).join(" · ");
-      return `<button type="button" class="li tap" data-pos="${escapeHtml(item.position_id)}">
-        <div class="l"><div class="t">${escapeHtml(item.title)}</div><div class="s">${escapeHtml(sub)}</div></div>
-        <div class="r"><span class="${escapeHtml(tone)}">${escapeHtml(item.amount_text || "")}</span>${note}</div>
-        <span class="chev">›</span>
-      </button>`;
-    }
-    let amount = "";
-    let pct = "";
-    if (item.kind === "bought" && item.size_sol != null) {
-      amount = fmtSol(item.size_sol, 2);
-    } else if (item.pnl_sol != null) {
-      const cls = item.pnl_sol >= 0 ? "up" : "dn";
-      amount = `<span class="${cls}">${item.pnl_sol >= 0 ? "+" : ""}${Number(item.pnl_sol).toFixed(4)} SOL</span>`;
-      if (item.pnl_pct != null) pct = `<small class="${cls}">${fmtPct(item.pnl_pct)}</small>`;
-    } else if (item.score_total != null) {
-      amount = `<span class="sec">${Number(item.score_total).toFixed(3)}</span>`;
-    }
-    const sub = [item.subtitle, when].filter(Boolean).join(" · ");
-    // The whole row is already a link; a nested <a> would break the layout.
-    const inner = `<div class="l"><div class="t">${escapeHtml(item.title)}</div>
-      <div class="s">${escapeHtml(sub)}</div></div>
-      <div class="r">${amount}${pct}</div>`;
-    if (item.url) {
-      return `<a class="li" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${inner}</a>`;
-    }
-    return `<div class="li">${inner}</div>`;
-  }
-
+  const fmtPct = (n) => `${n >= 0 ? "+" : ""}${Number(n).toFixed(2)}%`;
   function fmtMc(n) {
-    if (n == null || !Number.isFinite(Number(n)) || Number(n) <= 0) return "—";
     const v = Number(n);
+    if (n == null || !Number.isFinite(v) || v <= 0) return "—";
     if (v >= 1e6) return `$${(v / 1e6).toFixed(2)}M`;
     if (v >= 1e3) return `$${(v / 1e3).toFixed(1)}K`;
     return `$${v.toFixed(0)}`;
   }
-
   function fmtAge(sec) {
     if (sec == null) return "—";
     const s = Math.max(0, Math.round(sec));
@@ -246,314 +81,371 @@
     if (s < 86400) return `${Math.floor(s / 3600)}h ${Math.floor((s % 3600) / 60)}m`;
     return `${Math.floor(s / 86400)}d ${Math.floor((s % 86400) / 3600)}h`;
   }
-
-  function allPositions(data) {
-    return [...(data.open_positions || []), ...(data.closed_positions || [])];
+  function clock(iso) {
+    if (!iso) return "";
+    return new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Budapest", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(iso));
+  }
+  const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  function matchesQuery(text) {
+    const q = state.query.trim().toLowerCase();
+    return !q || String(text || "").toLowerCase().includes(q);
   }
 
-  function positionCard(p) {
+  // ---- count-up -----------------------------------------------------------
+  function countUp(el, to, fmt) {
+    // First paint shows the real value; only later changes animate.
+    const from = state.shownBalance == null ? to : state.shownBalance;
+    state.shownBalance = to;
+    if (from === to || matchMedia("(prefers-reduced-motion: reduce)").matches) { el.innerHTML = fmt(to); return; }
+    const t0 = performance.now();
+    const dur = 900;
+    const step = (now) => {
+      const k = Math.min(1, (now - t0) / dur);
+      const e = 1 - Math.pow(1 - k, 3);
+      el.innerHTML = fmt(from + (to - from) * e);
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  // ---- balance chart --------------------------------------------------------
+  function drawChart(canvas, series, hasTrades) {
+    if (!canvas) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const width = canvas.clientWidth || 390;
+    const height = 210;
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const points = (series && series.points) || [];
+    const values = hasTrades && points.length >= 2 ? points.map((p) => p.v) : null;
+    const padTop = 18;
+    const padBot = 14;
+    const grad = ctx.createLinearGradient(0, 0, 0, height);
+    grad.addColorStop(0, "rgba(34,224,122,0.28)");
+    grad.addColorStop(1, "rgba(34,224,122,0)");
+    let xs; let ys;
+    if (values) {
+      const min = Math.min(...values); const max = Math.max(...values); const span = max - min || 1;
+      const ts = points.map((p) => p.t); const t0 = Math.min(...ts); const tspan = Math.max(...ts) - t0 || 1;
+      xs = points.map((p) => ((p.t - t0) / tspan) * width);
+      ys = values.map((v) => padTop + (1 - (v - min) / span) * (height - padTop - padBot));
+    } else {
+      // flat baseline: honest "no trades yet"
+      xs = [0, width]; ys = [height * 0.62, height * 0.62];
+    }
+    ctx.beginPath();
+    xs.forEach((x, i) => (i ? ctx.lineTo(x, ys[i]) : ctx.moveTo(x, ys[i])));
+    ctx.strokeStyle = "#22e07a"; ctx.lineWidth = 2.2; ctx.lineJoin = "round";
+    ctx.shadowColor = "rgba(34,224,122,0.55)"; ctx.shadowBlur = 10;
+    ctx.stroke(); ctx.shadowBlur = 0;
+    ctx.lineTo(xs[xs.length - 1], height); ctx.lineTo(xs[0], height); ctx.closePath();
+    ctx.fillStyle = grad; ctx.fill();
+    const lx = xs[xs.length - 1]; const ly = ys[ys.length - 1];
+    ctx.beginPath(); ctx.arc(Math.min(lx, width - 6), ly, 4.5, 0, Math.PI * 2); ctx.fillStyle = "#22e07a"; ctx.fill();
+    ctx.beginPath(); ctx.arc(Math.min(lx, width - 6), ly, 9, 0, Math.PI * 2); ctx.fillStyle = "rgba(34,224,122,0.18)"; ctx.fill();
+  }
+
+  // ---- pieces ---------------------------------------------------------------
+  function chipFor(item) {
+    const tone = item.tone === "kill" ? "r" : item.tone === "ok" ? "g" : item.tone === "wait" ? "b" : "";
+    return `<span class="chip ${tone}">${esc(item.detail || "")}</span>`;
+  }
+
+  function agentCard(agent, full) {
+    const [icon, color] = AGENT_STYLE[agent.id] || ["bot", "#22e07a"];
+    const gauge = agent.kind === "gauge" && agent.gauge != null
+      ? `<div class="bar"><b style="width:${Math.round(Math.max(0, Math.min(1, agent.gauge)) * 100)}%"></b></div>` : "";
+    const items = (agent.items || []).slice(0, full ? 6 : 4);
+    const mini = items.length
+      ? `<div class="mini">${items.map((i) => `<div class="mrow"><span class="s">${esc(i.symbol || "—")}</span>${chipFor(i)}</div>`).join("")}</div>`
+      : `<div class="aempty">${ico("hourglass")}${esc(agent.empty || "Nothing yet")}</div>`;
+    return `<article class="acard ${full ? "agent-full" : ""}" style="--acc:${color}">
+      <div class="ahead"><div class="tile">${ico(icon)}</div>
+        <div><div class="nm">${esc(agent.name)}</div><div class="st"><i class="${agent.running ? "" : "off"}"></i>${agent.running ? "running" : "idle"}${agent.maps_to && agent.maps_to !== agent.name ? ` · ${esc(agent.maps_to)}` : ""}</div></div></div>
+      <div class="astat num">${esc(agent.headline || "—")}</div>
+      <div class="asub">${esc(agent.sub || "")}</div>
+      ${gauge}${mini}
+    </article>`;
+  }
+
+  function rowIcon(item) {
+    if (item.kind === "bought") return ["buy", "arrowIn"];
+    if (item.kind === "sold") return (item.pnl_sol ?? 0) >= 0 ? ["win", "check"] : ["loss", "trendDown"];
+    if (item.kind === "stopped") return ["stop", "octagon"];
+    if (item.kind === "intent") return ["info", "clock"];
+    if (item.stage === "scoring" || item.stage === "checker") return ["skip", "target"];
+    if (item.stage === "analyzer") return ["skip", "flask"];
+    return ["skip", "x"];
+  }
+
+  function activityRow(item) {
+    const [cls, icon] = rowIcon(item);
+    const when = clock(item.ts);
+    let right = "";
+    if (item.position_id) {
+      const tone = item.amount_tone || "";
+      const chip = item.note ? `<span class="chip ${tone === "up" ? "g" : tone === "dn" ? "r" : ""}">${esc(item.note)}</span>` : (item.score_total != null ? `<span class="chip y">${Number(item.score_total).toFixed(2)}</span>` : "");
+      right = `<span class="amt ${esc(tone)}">${esc(item.amount_text || "")}</span>${chip}`;
+    } else if (item.score_total != null) {
+      const s = Number(item.score_total);
+      right = `<span class="chip ${s >= 0.65 ? "g" : s >= 0.4 ? "y" : "r"}">${s.toFixed(2)}</span>`;
+    }
+    const sub = [item.subtitle, when].filter(Boolean).join(" • ");
+    const inner = `<div class="av ${cls}">${ico(icon)}</div>
+      <div class="l"><div class="t">${esc(item.title)}</div><div class="s">${esc(sub)}</div></div>
+      <div class="r">${right}</div>`;
+    if (item.position_id) return `<button type="button" class="li" data-pos="${esc(item.position_id)}">${inner}<span class="chev">${ico("chevR")}</span></button>`;
+    if (item.url) return `<a class="li" href="${esc(item.url)}" target="_blank" rel="noopener">${inner}</a>`;
+    return `<div class="li">${inner}</div>`;
+  }
+
+  const allPositions = (data) => [...(data.open_positions || []), ...(data.closed_positions || [])];
+
+  function positionRow(p) {
     const ch = p.change_pct;
     const cls = ch == null ? "sec" : ch >= 0 ? "up" : "dn";
-    const status = p.open ? "Open" : "Closed";
-    return `<button type="button" class="li tap" data-pos="${escapeHtml(p.id)}">
-      <div class="l"><div class="t">${escapeHtml(p.symbol)} <span class="pill ${p.open ? "on" : ""}">${status}</span></div>
-        <div class="s">${escapeHtml(fmtSol(p.size_sol, 4))} · entry ${escapeHtml(fmtMc(p.entry_mc_usd))} MC · ${escapeHtml(clock(p.opened_at))}</div></div>
-      <div class="r"><span class="${cls}">${ch == null ? "—" : fmtPct(ch)}</span><small>${escapeHtml(fmtMc(p.last_mc_usd))} MC</small></div>
-      <span class="chev">›</span>
-    </button>`;
+    const av = p.icon ? `<div class="av info"><img src="${esc(p.icon)}" alt="" referrerpolicy="no-referrer"></div>` : `<div class="av ${p.open ? "info" : "skip"}">${ico("coins")}</div>`;
+    return `<button type="button" class="li" data-pos="${esc(p.id)}">${av}
+      <div class="l"><div class="t">${esc(p.symbol)}<span class="pill ${p.open ? "on" : ""}">${p.open ? "open" : "closed"}</span></div>
+        <div class="s">${esc(fmtSol(p.size_sol, 3))} • entry ${esc(fmtMc(p.entry_mc_usd))} • ${esc(clock(p.opened_at))}</div></div>
+      <div class="r"><span class="amt ${cls}">${ch == null ? "—" : fmtPct(ch)}</span><span class="chip">${esc(fmtMc(p.last_mc_usd))}</span></div>
+      <span class="chev">${ico("chevR")}</span></button>`;
   }
 
-  const MARK_COLORS = { entry: "#0a84ff", partial: "#ffd60a", trail: "#ff9f0a", stop: "#ff453a", exit: "#00d35a" };
+  function emptyBlock(icon, text) {
+    return `<div class="list"><div class="empty">${ico(icon)}<div>${esc(text)}</div></div></div>`;
+  }
+
+  // ---- views ----------------------------------------------------------------
+  function renderHome(data) {
+    const usd = data.balance_usd;
+    const fmtBig = (v) => {
+      if (usd != null) {
+        const [w, c] = Number(v).toFixed(2).split(".");
+        return `$${Number(w).toLocaleString("en-US")}<span class="c">.${c}</span>`;
+      }
+      return `${Number(v).toFixed(3)}<span class="c"> SOL</span>`;
+    };
+    const up = (data.pnl_today_sol ?? 0) >= 0;
+    const pnlUsd = data.pnl_today_usd != null ? `${up ? "+" : "-"}${fmtUsd(Math.abs(data.pnl_today_usd))}` : `${up ? "+" : ""}${Number(data.pnl_today_sol || 0).toFixed(4)} SOL`;
+    const series = (data.chart || {})[state.range] || { points: [] };
+    const ranges = RANGES.map((r) => `<button type="button" data-range="${r}" class="${state.range === r ? "on" : ""}">${r === "LIVE" ? '<i class="ld"></i>' : ""}${r}</button>`).join("");
+    const homeItems = (data.home_activity || []).filter((i) => matchesQuery(`${i.title} ${i.symbol} ${i.reason_label}`));
+    const open = data.open_positions || [];
+    const closed = (data.closed_positions || []).slice(0, 3);
+    const k = data.kpis || {};
+
+    views.home.innerHTML = `
+      <div class="hero">
+        <div class="lbl">${ico("wallet")} Paper balance <span class="tag">dry-run</span></div>
+        <div class="big num" id="bal"></div>
+        <div class="pnl"><span class="${up ? "up" : "dn"}">${ico(up ? "trend" : "trendDown")}</span>
+          <span class="${up ? "up" : "dn"} num">${esc(pnlUsd)} (${fmtPct(data.pnl_today_pct || 0)}) today</span>
+          <span class="mult ${data.multiplier < 1 ? "dn" : ""} num">${Number(data.multiplier || 1).toFixed(2)}x</span></div>
+        <div class="subline num">${esc(fmtSol(data.balance_sol, 4))}${data.sol_usd ? ` • ${esc(fmtUsd(data.sol_usd))}/SOL` : ""} • simulated, no real funds</div>
+      </div>
+      <div class="chartwrap"><canvas id="pnl-chart"></canvas>${data.has_trades ? "" : `<div class="emp">${ico("chart")}<span>Flat until the first simulated trade</span></div>`}</div>
+      <div class="ranges">${ranges}</div>
+      <div class="stats">
+        <div class="stat"><div class="k">${ico("eye")} Scanned</div><div class="v num">${k.tokens_watched ?? 0}</div></div>
+        <div class="stat"><div class="k">${ico("layers")} Checked</div><div class="v num">${k.passed_monitor ?? 0}</div></div>
+        <div class="stat"><div class="k">${ico("zap")} Buys</div><div class="v num">${k.buys ?? 0}</div></div>
+      </div>
+      <div class="sech"><h3>Agents</h3><span class="aside"><i></i>${data.agents_running} running</span></div>
+      <div class="car">${(data.agents || []).map((a) => agentCard(a, false)).join("")}</div>
+      <div class="sech"><h3>Positions</h3><span class="aside">${open.length} open</span></div>
+      ${open.length || closed.length ? `<div class="list">${open.concat(closed).map(positionRow).join("")}</div>` : emptyBlock("target", "No simulated positions yet. A token needs a score of 0.65+ and must pass the checker and risk gate before the bot buys.")}
+      <div class="sech"><h3>Activity</h3><button type="button" data-go="activity">See all ${ico("chevR")}</button></div>
+      ${homeItems.length ? `<div class="list">${homeItems.map(activityRow).join("")}</div>` : emptyBlock("activity", "No decisions past the scanner yet")}
+    `;
+    countUp($("#bal"), usd != null ? usd : Number(data.balance_sol || 0), fmtBig);
+    drawChart($("#pnl-chart"), series, Boolean(data.has_trades));
+    views.home.querySelectorAll("[data-range]").forEach((b) => b.addEventListener("click", () => { state.range = b.getAttribute("data-range"); render(); }));
+    views.home.querySelectorAll("[data-go]").forEach((b) => b.addEventListener("click", () => setTab(b.getAttribute("data-go"))));
+  }
+
+  function renderAgents(data) {
+    const q = state.query.trim().toLowerCase();
+    const list = (data.agents || []).filter((a) => !q || [a.name, a.sub, a.headline, ...(a.items || []).map((i) => `${i.symbol} ${i.detail}`)].join(" ").toLowerCase().includes(q));
+    views.agents.innerHTML = `<div class="ptitle">Agents</div>
+      <p class="note">Live view of the dry-run pipeline: scanner → analyzer → Grok agents → checker → risk → executor. Read-only.</p>
+      ${list.map((a) => agentCard(a, true)).join("") || emptyBlock("search", "No agents match")}`;
+  }
+
+  function renderActivity(data) {
+    const filters = [["notable", "Decisions", "target"], ["trades", "Trades", "coins"], ["skipped", "Skips", "x"], ["all", "All", "layers"]];
+    let items = data.activity || [];
+    if (state.activityFilter === "notable") items = items.filter((i) => ["bought", "sold", "stopped", "intent"].includes(i.kind) || (i.stage && i.stage !== "monitor"));
+    else if (state.activityFilter === "skipped") items = items.filter((i) => i.kind === "skipped");
+    else if (state.activityFilter === "trades") items = items.filter((i) => ["bought", "sold", "stopped"].includes(i.kind));
+    items = items.filter((i) => matchesQuery(`${i.title} ${i.symbol} ${i.reason_label} ${i.detail || ""}`));
+    views.activity.innerHTML = `<div class="ptitle">Activity</div>
+      <div class="filters">${filters.map(([id, label, ic]) => `<button type="button" data-filter="${id}" class="${state.activityFilter === id ? "on" : ""}">${ico(ic)}${label}</button>`).join("")}</div>
+      ${items.length ? `<div class="list">${items.slice(0, 150).map(activityRow).join("")}</div>` : emptyBlock("hourglass", state.activityFilter === "trades" ? "No simulated trades yet" : "Nothing matches")}`;
+    views.activity.querySelectorAll("[data-filter]").forEach((b) => b.addEventListener("click", () => { state.activityFilter = b.getAttribute("data-filter"); render(); }));
+  }
+
+  function renderAccount(data) {
+    const rows = [
+      ["shield", "Mode", "Simulated / dry-run"],
+      ["activity", "Bot", data.bot_running ? "Running" : "Not running"],
+      ["wallet", "Starting balance", fmtSol(data.starting_balance_sol, 2)],
+      ["coins", "Current balance", fmtSol(data.balance_sol, 4)],
+      ["chart", "Balance in USD", fmtUsd(data.balance_usd) || "Price unavailable"],
+      ["trend", "Realized PnL", `${data.realized_sol >= 0 ? "+" : ""}${fmtSol(data.realized_sol, 4)}`],
+      ["target", "Open positions", String((data.open_positions || []).length)],
+      ["zap", "Simulated buys", String((data.kpis || {}).buys ?? 0)],
+      ["eye", "Tokens watched", String((data.kpis || {}).tokens_watched ?? 0)],
+      ["cpu", "Grok calls (log)", String(data.grok_calls_today ?? 0)],
+      ["clock", "Updated", data.generated_at ? `${clock(data.generated_at)} (Europe/Budapest)` : "—"],
+    ];
+    views.account.innerHTML = `<div class="ptitle">Account</div>
+      <div class="card"><h4>${ico("wallet")} Simulated wallet</h4>
+        ${rows.map(([i, k, v]) => `<div class="prop"><span class="k">${ico(i)}${esc(k)}</span><span class="v ${k === "Bot" ? (data.bot_running ? "up" : "dn") : ""}">${esc(v)}</span></div>`).join("")}</div>
+      <div class="card"><h4>${ico("info")} About</h4><p class="sec" style="margin:0;font-size:14px;line-height:1.5">
+        A read-only, public dry-run snapshot. It sends no transactions and holds no wallet key. The ${esc(fmtSol(data.starting_balance_sol, 2))} starting balance is simulated. The page refreshes about once a minute; the bot republishes the data every few minutes.</p></div>`;
+  }
+
+  // ---- token page -----------------------------------------------------------
+  const MARK = { entry: ["#3d8bff", "arrowIn"], partial: ["#ffd43b", "coins"], trail: ["#ff9f0a", "trendDown"], stop: ["#ff4d5e", "octagon"], exit: ["#22e07a", "check"] };
 
   function mcChartSvg(p) {
     const pts = (p.mc_history || []).filter((x) => x && x[1] > 0);
-    const W = 358;
-    const H = 200;
-    const padT = 14;
-    const padB = 22;
+    const W = 340; const H = 190; const padT = 16; const padB = 22;
     if (pts.length < 2) {
-      return `<div class="tchart empty-chart">${
-        p.open ? "Collecting market cap samples… the chart fills in as the tracker polls (about every 20 s)." : "No market cap samples were recorded for this position."
-      }</div>`;
+      return `<div class="tchart empty-chart">${ico("hourglass")}<div>${p.open ? "Collecting market cap samples… the chart fills in as the tracker polls (about every 20 s)." : "No market cap samples were recorded for this position."}</div></div>`;
     }
     const marks = (p.markers || []).filter((m) => m.t);
     const ts = pts.map((x) => x[0]).concat(marks.map((m) => m.t));
-    const t0 = Math.min(...ts);
-    const t1 = Math.max(...ts);
+    const t0 = Math.min(...ts); const t1 = Math.max(...ts);
     const vals = pts.map((x) => x[1]).concat(marks.map((m) => m.mc_usd).filter((v) => v > 0));
-    let lo = Math.min(...vals);
-    let hi = Math.max(...vals);
-    const pad = (hi - lo) * 0.08 || hi * 0.05 || 1;
-    lo -= pad;
-    hi += pad;
+    let lo = Math.min(...vals); let hi = Math.max(...vals);
+    const pad = (hi - lo) * 0.08 || hi * 0.05 || 1; lo -= pad; hi += pad;
     const x = (t) => ((t - t0) / (t1 - t0 || 1)) * W;
     const y = (v) => padT + (1 - (v - lo) / (hi - lo || 1)) * (H - padT - padB);
     const line = pts.map((q, i) => `${i ? "L" : "M"}${x(q[0]).toFixed(1)},${y(q[1]).toFixed(1)}`).join("");
     const last = pts[pts.length - 1];
-    const up = last[1] >= (p.entry_mc_usd || pts[0][1]);
-    const col = up ? "#00d35a" : "#ff453a";
+    const col = last[1] >= (p.entry_mc_usd || pts[0][1]) ? "#22e07a" : "#ff4d5e";
     const area = `${line}L${x(last[0]).toFixed(1)},${H - padB}L${x(pts[0][0]).toFixed(1)},${H - padB}Z`;
     const nearest = (t) => pts.reduce((b, q) => (Math.abs(q[0] - t) < Math.abs(b[0] - t) ? q : b), pts[0])[1];
     const entryY = p.entry_mc_usd ? y(p.entry_mc_usd) : null;
-    const markSvg = marks
-      .map((m) => {
-        const mx = x(m.t);
-        const my = y(m.mc_usd > 0 ? m.mc_usd : nearest(m.t));
-        const c = MARK_COLORS[m.kind] || "#fff";
-        return `<line x1="${mx.toFixed(1)}" x2="${mx.toFixed(1)}" y1="${padT}" y2="${H - padB}" stroke="${c}" stroke-opacity="0.35" stroke-dasharray="3 4"/>
-          <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="5" fill="${c}" stroke="#000" stroke-width="2"/>`;
-      })
-      .join("");
+    const markSvg = marks.map((m) => {
+      const mx = Math.max(6, Math.min(W - 6, x(m.t))); const my = y(m.mc_usd > 0 ? m.mc_usd : nearest(m.t)); const c = (MARK[m.kind] || ["#fff"])[0];
+      return `<line x1="${mx.toFixed(1)}" x2="${mx.toFixed(1)}" y1="${padT}" y2="${H - padB}" stroke="${c}" stroke-opacity=".35" stroke-dasharray="3 4"/>
+        <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="9" fill="${c}" fill-opacity=".2"/><circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="4.5" fill="${c}" stroke="#050506" stroke-width="2"/>`;
+    }).join("");
     const tl = (t) => new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Budapest", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(t * 1000));
     return `<svg class="tchart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Market cap since entry">
-      <defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity="0.25"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
+      <defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".3"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
       <path d="${area}" fill="url(#tg)"/>
-      ${entryY != null ? `<line x1="0" x2="${W}" y1="${entryY.toFixed(1)}" y2="${entryY.toFixed(1)}" stroke="#0a84ff" stroke-opacity="0.5" stroke-dasharray="4 6"/>` : ""}
-      <path d="${line}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/>
+      ${entryY != null ? `<line x1="0" x2="${W}" y1="${entryY.toFixed(1)}" y2="${entryY.toFixed(1)}" stroke="#3d8bff" stroke-opacity=".55" stroke-dasharray="4 6"/>` : ""}
+      <path d="${line}" fill="none" stroke="${col}" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
       ${markSvg}
-      <text x="2" y="${H - 6}" fill="rgba(235,235,245,0.5)" font-size="11">${tl(t0)}</text>
-      <text x="${W - 2}" y="${H - 6}" fill="rgba(235,235,245,0.5)" font-size="11" text-anchor="end">${tl(t1)}</text>
-      <text x="${W - 2}" y="12" fill="rgba(235,235,245,0.5)" font-size="11" text-anchor="end">${fmtMc(hi)}</text>
+      <text x="2" y="${H - 5}" fill="rgba(235,235,245,.45)" font-size="11">${tl(t0)}</text>
+      <text x="${W - 2}" y="${H - 5}" fill="rgba(235,235,245,.45)" font-size="11" text-anchor="end">${tl(t1)}</text>
+      <text x="${W - 2}" y="11" fill="rgba(235,235,245,.45)" font-size="11" text-anchor="end">${fmtMc(hi)}</text>
     </svg>`;
+  }
+
+  function exitIcon(e) {
+    const base = String(e.reason || "").split(" (")[0];
+    if (!e.final) return MARK.partial;
+    if (base === "trailing_stop") return MARK.trail;
+    if (["stop_loss", "rug", "max_hold"].includes(base) || (e.pnl_sol ?? 0) < 0) return MARK.stop;
+    return MARK.exit;
   }
 
   function renderToken(data) {
     const p = allPositions(data).find((x) => x.id === state.token);
-    const back = `<div class="tback"><button type="button" id="tok-back">‹ Back</button></div>`;
+    const backLabel = { home: "Home", activity: "Activity", agents: "Agents", account: "Account" }[state.prevTab] || "Home";
+    const bar = `<div class="tbar"><button type="button" id="tok-back">${ico("chevL")}${backLabel}</button>${p ? `<button type="button" id="tok-share">${ico("share")}Share</button>` : ""}</div>`;
     if (!p) {
-      views.token.innerHTML = `${back}<div class="empty">This position is not in the latest snapshot.</div>`;
+      views.token.innerHTML = `${bar}<div style="padding-top:16px">${emptyBlock("search", "This position is not in the latest snapshot.")}</div>`;
     } else {
       const ch = p.change_pct;
       const cls = ch == null ? "sec" : ch >= 0 ? "up" : "dn";
-      const since = p.open ? "since bought" : "final result";
-      const legend = (p.markers || [])
-        .map((m) => `<span class="lg"><i style="background:${MARK_COLORS[m.kind] || "#fff"}"></i>${escapeHtml(m.label)}${m.t ? ` · ${escapeHtml(clock(new Date(m.t * 1000).toISOString()))}` : ""}</span>`)
-        .join("");
-      const exits = (p.exits || []).length
-        ? (p.exits || [])
-            .map((e) => `<div class="prop"><span class="k">${escapeHtml(clock(e.at))} · ${escapeHtml(e.final ? "Exit" : "Partial")} · ${escapeHtml(e.reason_label)}</span>
-              <span class="v ${e.pnl_sol >= 0 ? "up" : "dn"}">${e.pnl_sol >= 0 ? "+" : ""}${Number(e.pnl_sol).toFixed(4)} SOL${e.pnl_pct != null ? ` · ${fmtPct(e.pnl_pct)}` : ""}</span></div>`)
-            .join("")
-        : `<div class="sec" style="font-size:15px">No exits yet. The bot's own risk rules decide when to sell.</div>`;
+      const legend = (p.markers || []).map((m) => `<span class="lg"><i style="background:${(MARK[m.kind] || ["#fff"])[0]}"></i>${esc(m.label)}${m.t ? ` · ${esc(clock(new Date(m.t * 1000).toISOString()))}` : ""}</span>`).join("");
+      const tile = (c, i) => `<span class="rowic" style="color:${c};background:${c}22">${ico(i)}</span>`;
+      const exits = [`<div class="prop"><span class="k">${tile(MARK.entry[0], MARK.entry[1])}Bought · ${esc(clock(p.opened_at))}</span><span class="v">${esc(fmtSol(p.size_sol, 4))}</span></div>`]
+        .concat((p.exits || []).map((e) => {
+          const [c, i] = exitIcon(e);
+          return `<div class="prop"><span class="k">${tile(c, i)}${esc(e.final ? "Exit" : `Sold ${Math.round((e.fraction || 0) * 100)}%`)} · ${esc(e.reason_label)} · ${esc(clock(e.at))}</span>
+            <span class="v ${e.pnl_sol >= 0 ? "up" : "dn"}">${e.pnl_sol >= 0 ? "+" : ""}${Number(e.pnl_sol).toFixed(4)} SOL</span></div>`;
+        })).join("");
       const scores = p.scores || {};
-      const scoreRows = ["audit", "narrative", "timing", "metrics", "total"]
-        .filter((k) => scores[k] != null)
-        .map((k) => `<div class="prop"><span class="k">${k[0].toUpperCase() + k.slice(1)}</span><span class="v">${Number(scores[k]).toFixed(3)}</span></div>`)
-        .join("");
-      const icon = p.icon ? `<img class="ticon" src="${escapeHtml(p.icon)}" alt="" referrerpolicy="no-referrer">` : `<div class="ticon ph">${escapeHtml((p.symbol || "?").slice(0, 1))}</div>`;
-      views.token.innerHTML = `${back}
-        <div class="thead">${icon}<div><div class="tsym">${escapeHtml(p.symbol)}</div><div class="sec" style="font-size:15px">${escapeHtml(p.name || "")}</div></div>
-          <span class="paper" style="margin-left:auto">DRY-RUN</span></div>
-        <div class="tbig ${cls}">${ch == null ? "—" : fmtPct(ch)} <small class="sec">${since}</small></div>
-        <div class="sol-line">MC ${escapeHtml(fmtMc(p.last_mc_usd))} · entry ${escapeHtml(fmtMc(p.entry_mc_usd))} · age ${escapeHtml(fmtAge(p.age_seconds))}</div>
+      const SC = { audit: ["shield", "#22e07a"], narrative: ["brain", "#a77bff"], timing: ["clock", "#ff9f0a"], metrics: ["flask", "#3d8bff"], total: ["target", "#ffd43b"] };
+      const scoreRows = Object.keys(SC).filter((k) => scores[k] != null)
+        .map((k) => `<div class="prop"><span class="k">${tile(SC[k][1], SC[k][0])}${k[0].toUpperCase() + k.slice(1)}</span><span class="v num">${Number(scores[k]).toFixed(3)}</span></div>`).join("");
+      const icon = p.icon ? `<img class="ticon" src="${esc(p.icon)}" alt="" referrerpolicy="no-referrer">` : `<div class="ticon">${esc((p.symbol || "?").slice(0, 1))}</div>`;
+      views.token.innerHTML = `${bar}
+        <div class="thead">${icon}<div style="flex:1;min-width:0"><div class="tsym">${esc(p.symbol)}</div><div class="tname">${esc(p.name || "")}</div></div><span class="tag">dry-run</span></div>
+        <div class="tbig ${cls} num">${ch == null ? "—" : fmtPct(ch)}<small>${p.open ? "since bought" : "final result"}</small></div>
+        <div class="tmeta"><span>${ico("chart")}MC ${esc(fmtMc(p.last_mc_usd))}</span><span>${ico("arrowIn")}entry ${esc(fmtMc(p.entry_mc_usd))}</span><span>${ico("clock")}age ${esc(fmtAge(p.age_seconds))}</span><span>${ico(p.open ? "activity" : "check")}${p.open ? "open" : "closed"}</span></div>
         <div class="tchartwrap">${mcChartSvg(p)}</div>
         <div class="legend">${legend}</div>
-        <div class="card"><h4>Position</h4>
-          <div class="prop"><span class="k">Status</span><span class="v">${p.open ? "Open" : "Closed"}</span></div>
-          <div class="prop"><span class="k">Bought</span><span class="v">${escapeHtml(clock(p.opened_at))} (Europe/Budapest)</span></div>
-          <div class="prop"><span class="k">Size</span><span class="v">${escapeHtml(fmtSol(p.size_sol, 4))}${p.size_usd != null ? ` · ${escapeHtml(fmtUsd(p.size_usd))}` : ""}</span></div>
-          <div class="prop"><span class="k">Entry MC</span><span class="v">${escapeHtml(fmtMc(p.entry_mc_usd))}</span></div>
-          <div class="prop"><span class="k">Realized PnL</span><span class="v ${p.realized_sol >= 0 ? "up" : "dn"}">${p.realized_sol >= 0 ? "+" : ""}${Number(p.realized_sol || 0).toFixed(4)} SOL</span></div>
-          <div class="prop"><span class="k">Score</span><span class="v">${p.score != null ? Number(p.score).toFixed(3) : "—"}</span></div>
-        </div>
-        <div class="card"><h4>Exits</h4>${exits}</div>
-        ${scoreRows ? `<div class="card"><h4>Agent scores</h4>${scoreRows}</div>` : ""}
-        ${p.checker || p.narrative ? `<div class="card"><h4>Why it was bought</h4><p class="sec" style="margin:0;font-size:15px;line-height:1.45">${escapeHtml(p.narrative || "")} ${escapeHtml(p.checker || "")}</p></div>` : ""}
-        <div class="card"><a href="${escapeHtml(p.url || "#")}" target="_blank" rel="noopener" style="color:var(--blue)">Open on pump.fun ›</a></div>`;
+        <div class="card"><h4>${ico("layers")} Trades</h4>${exits}</div>
+        <div class="card"><h4>${ico("wallet")} Position</h4>
+          <div class="prop"><span class="k">${ico("coins")}Size</span><span class="v num">${esc(fmtSol(p.size_sol, 4))}${p.size_usd != null ? ` · ${esc(fmtUsd(p.size_usd))}` : ""}</span></div>
+          <div class="prop"><span class="k">${ico("trend")}Realized PnL</span><span class="v num ${p.realized_sol >= 0 ? "up" : "dn"}">${p.realized_sol >= 0 ? "+" : ""}${Number(p.realized_sol || 0).toFixed(4)} SOL</span></div>
+          <div class="prop"><span class="k">${ico("target")}Score</span><span class="v num">${p.score != null ? Number(p.score).toFixed(3) : "—"}</span></div></div>
+        ${scoreRows ? `<div class="card"><h4>${ico("cpu")} Agent scores</h4>${scoreRows}</div>` : ""}
+        ${p.checker || p.narrative ? `<div class="card"><h4>${ico("brain")} Why it was bought</h4><p class="sec" style="margin:0;font-size:14px;line-height:1.5">${esc(p.narrative || "")} ${esc(p.checker || "")}</p></div>` : ""}
+        ${p.url && p.url !== "#" ? `<div class="card"><a href="${esc(p.url)}" target="_blank" rel="noopener" class="prop" style="border:0;padding:2px 0"><span class="k">${ico("link")}Open on pump.fun</span><span class="v sec">${ico("chevR")}</span></a></div>` : ""}`;
+      $("#tok-share").addEventListener("click", async () => {
+        const url = location.href;
+        const text = `${p.symbol} ${ch == null ? "" : fmtPct(ch)} (dry-run)`;
+        try {
+          if (navigator.share) await navigator.share({ title: `${p.symbol} · Grok Desk`, text, url });
+          else { await navigator.clipboard.writeText(url); toast("Link copied"); }
+        } catch (_) { /* dismissed */ }
+      });
     }
-    $("#tok-back").addEventListener("click", () => closeToken());
+    $("#tok-back").addEventListener("click", closeToken);
+  }
+
+  function toast(msg) {
+    const el = document.createElement("div");
+    el.className = "toast"; el.textContent = msg; document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1600);
   }
 
   function openToken(id) {
-    state.prevTab = state.tab === "token" ? state.prevTab : state.tab;
+    if (state.tab !== "token") state.prevTab = state.tab;
     state.token = id;
-    if (location.hash !== `#token=${encodeURIComponent(id)}`) history.pushState(null, "", `#token=${encodeURIComponent(id)}`);
+    const h = `#token=${encodeURIComponent(id)}`;
+    if (location.hash !== h) history.pushState(null, "", h);
     setTab("token");
   }
-
   function closeToken() {
     state.token = null;
     if (location.hash.startsWith("#token=")) history.pushState(null, "", location.pathname + location.search);
     setTab(state.prevTab || "home");
   }
 
-  function renderHome(data) {
-    const usd = fmtUsd(data.balance_usd);
-    const big = usd || `${Number(data.balance_sol).toFixed(2)}`;
-    const suffix = usd ? "" : " <span style=\"font-size:28px;letter-spacing:0\">SOL</span>";
-    const priceBit = data.sol_usd != null ? ` · ${fmtUsd(data.sol_usd)} per SOL` : "";
-    const solLine = usd
-      ? `<div class="sol-line">${fmtSol(data.balance_sol, 4)}${priceBit} · simulated</div>`
-      : `<div class="sol-line">simulated / dry-run${priceBit}</div>`;
-    const up = data.pnl_today_sol >= 0;
-    const todayCls = up ? "up" : "dn";
-    let todayAmt = `${fmtPct(data.pnl_today_pct)} today`;
-    if (data.balance_usd != null && data.pnl_today_usd != null) {
-      const usd = fmtUsd(Math.abs(data.pnl_today_usd));
-      todayAmt += ` · ${up ? "+" : "-"}${usd}`;
-    }
-    const ranges = RANGES.map((r) => `<button type="button" data-range="${r}" class="${state.range === r ? "on" : ""}">${r}</button>`).join("");
-    const series = (data.chart || {})[state.range] || { points: [] };
-    const emptyChart = data.has_trades ? "" : `<div class="emp">Waiting for the first trade</div>`;
-    const agents = (data.agents || []).map((a) => agentCard(a, true)).join("");
-    const homeItems = (data.home_activity || []).filter((i) => matchesQuery(`${i.title} ${i.symbol} ${i.reason_label}`));
-    const activity = homeItems.length
-      ? `<div class="list">${homeItems.map(activityRow).join("")}</div>`
-      : `<div class="list"><div class="empty">No decisions past the monitor yet</div></div>`;
-
-    views.home.innerHTML = `
-      <div class="bal">
-        <div class="big">${big}${suffix}</div>
-        <span class="paper">DRY-RUN</span>
-      </div>
-      ${solLine}
-      <div class="today">
-        <span class="${todayCls}">${escapeHtml(todayAmt)}</span>
-        <span class="mult ${data.multiplier < 1 ? "dn" : ""}">${Number(data.multiplier).toFixed(2)}×</span>
-      </div>
-      <div class="chartwrap">
-        <canvas id="pnl-chart"></canvas>
-        ${emptyChart}
-      </div>
-      <div class="ranges">${ranges}</div>
-      <div class="sech">Agents · ${data.agents_running} running</div>
-      <div class="car">${agents}</div>
-      <div class="sech">Positions</div>
-      ${positionsBlock(data)}
-      <div class="sech">Activity <button type="button" data-go="activity">See all</button></div>
-      ${activity}
-    `;
-    const canvas = $("#pnl-chart");
-    drawChart(canvas, series, Boolean(data.has_trades));
-    views.home.querySelectorAll("[data-range]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        state.range = btn.getAttribute("data-range");
-        render();
-      });
-    });
-    views.home.querySelectorAll("[data-go]").forEach((btn) => {
-      btn.addEventListener("click", () => setTab(btn.getAttribute("data-go")));
-    });
-  }
-
-  function positionsBlock(data) {
-    const open = data.open_positions || [];
-    const closed = (data.closed_positions || []).slice(0, 3);
-    if (!open.length && !closed.length) {
-      return `<div class="list"><div class="empty">No simulated positions yet. The bot buys only when a token scores at least 0.65 and passes the checker and risk gate; tap a trade here once it does.</div></div>`;
-    }
-    return `<div class="list">${open.concat(closed).map(positionCard).join("")}</div>`;
-  }
-
-  function renderAgents(data) {
-    const q = state.query.trim().toLowerCase();
-    const list = (data.agents || []).filter((a) => {
-      if (!q) return true;
-      const blob = [a.name, a.sub, a.headline, ...(a.items || []).map((i) => `${i.symbol} ${i.detail}`)].join(" ");
-      return blob.toLowerCase().includes(q);
-    });
-    views.agents.innerHTML = `
-      <div class="sech" style="padding-top:8px">Agents · ${data.agents_running} running</div>
-      <p class="note">These cards are a live view of the dry-run pipeline. There are no pause or settings controls here.</p>
-      ${list.map((a) => agentCard(a, false)).join("") || `<div class="empty">No agents match</div>`}
-    `;
-  }
-
-  function renderActivity(data) {
-    const filters = [
-      ["notable", "Decisions"],
-      ["all", "All"],
-      ["skipped", "Skips"],
-      ["trades", "Trades"],
-    ];
-    const chips = filters
-      .map(([id, label]) => `<button type="button" data-filter="${id}" class="${state.activityFilter === id ? "on" : ""}">${label}</button>`)
-      .join("");
-    let items = data.activity || [];
-    if (state.activityFilter === "notable") {
-      items = items.filter((i) => i.kind === "bought" || i.kind === "sold" || i.kind === "stopped" || i.kind === "intent" || (i.stage && i.stage !== "monitor"));
-    } else if (state.activityFilter === "skipped") {
-      items = items.filter((i) => i.kind === "skipped");
-    } else if (state.activityFilter === "trades") {
-      items = items.filter((i) => i.kind === "bought" || i.kind === "sold" || i.kind === "stopped");
-    }
-    items = items.filter((i) => matchesQuery(`${i.title} ${i.symbol} ${i.reason_label} ${i.detail || ""}`));
-    const body = items.length
-      ? `<div class="list">${items.slice(0, 150).map(activityRow).join("")}</div>`
-      : `<div class="list"><div class="empty">${state.activityFilter === "trades" ? "No simulated trades yet" : "Nothing matches"}</div></div>`;
-    views.activity.innerHTML = `
-      <div class="sech" style="padding-top:8px">Activity</div>
-      <div class="filters">${chips}</div>
-      ${body}
-    `;
-    views.activity.querySelectorAll("[data-filter]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        state.activityFilter = btn.getAttribute("data-filter");
-        render();
-      });
-    });
-  }
-
-  function renderAccount(data) {
-    const status = data.bot_running ? "Running" : "Not running";
-    const statusCls = data.bot_running ? "up" : "dn";
-    const rows = [
-      ["Mode", "simulated / dry-run"],
-      ["Bot", status],
-      ["Starting balance", fmtSol(data.starting_balance_sol, 2)],
-      ["Current balance", fmtSol(data.balance_sol, 4)],
-      ["Balance in USD", fmtUsd(data.balance_usd) || "Price unavailable"],
-      ["Realized PnL", `${data.realized_sol >= 0 ? "+" : ""}${fmtSol(data.realized_sol, 4)}`],
-      ["Open positions", String((data.open_positions || []).length)],
-      ["Simulated buys", String(data.kpis.buys)],
-      ["Tokens watched", String(data.kpis.tokens_watched)],
-      ["Grok calls (log)", String(data.grok_calls_today)],
-      ["Updated", data.generated_at ? clock(data.generated_at) + " (Europe/Budapest)" : "—"],
-    ];
-    views.account.innerHTML = `
-      <div class="sech" style="padding-top:8px">Account</div>
-      <div class="card">
-        <h4>Simulated wallet</h4>
-        ${rows
-          .map(([k, v]) => `<div class="prop"><span class="k">${escapeHtml(k)}</span><span class="v ${k === "Bot" ? statusCls : ""}">${escapeHtml(v)}</span></div>`)
-          .join("")}
-      </div>
-      <div class="card">
-        <h4>About this view</h4>
-        <p class="sec" style="margin:0;font-size:15px;line-height:1.45">
-          This is a read-only dashboard for the dry-run bot. It does not send transactions,
-          hold a wallet key, or change the pipeline. The starting balance of
-          ${escapeHtml(fmtSol(data.starting_balance_sol, 2))} is simulated.
-          This page is a public dry-run snapshot. Leave it open and it will refresh about once a minute; the file behind it is republished from the bot every few minutes.
-        </p>
-      </div>
-    `;
-  }
-
+  // ---- shell ----------------------------------------------------------------
   function render() {
     const data = state.data;
     if (!data) return;
     $("#offline").classList.toggle("on", state.error);
-    $("#bell-dot").classList.toggle("hidden", !(data.home_activity || []).length);
-    if (state.tab === "home") renderHome(data);
-    if (state.tab === "agents") renderAgents(data);
-    if (state.tab === "activity") renderActivity(data);
-    if (state.tab === "account") renderAccount(data);
-    if (state.tab === "token") renderToken(data);
     $("#demo-banner").classList.toggle("hidden", !data.demo);
+    const open = (data.open_positions || []).length;
+    $("#nav-sub").textContent = `dry-run via grokbot • ${open} open`;
+    const pill = $("#live-pill");
+    pill.classList.toggle("off", !data.bot_running);
+    pill.querySelector("b").textContent = data.bot_running ? "Live" : "Offline";
+    const fn = { home: renderHome, agents: renderAgents, activity: renderActivity, account: renderAccount, token: renderToken }[state.tab];
+    if (fn) fn(data);
   }
-
   function setTab(tab) {
     if (tab !== "token") state.token = null;
     state.tab = tab;
     Object.entries(views).forEach(([name, el]) => el.classList.toggle("on", name === tab));
-    document.querySelectorAll("#tabs button").forEach((btn) => {
-      btn.classList.toggle("on", btn.getAttribute("data-tab") === tab);
-    });
+    document.querySelectorAll("#tabs button").forEach((b) => b.classList.toggle("on", b.getAttribute("data-tab") === tab));
     render();
     window.scrollTo(0, 0);
   }
-
   async function refresh() {
     try {
       const res = await fetch(dataUrl(), { cache: "no-store" });
@@ -567,38 +459,22 @@
     }
   }
 
-  document.querySelectorAll("#tabs button").forEach((btn) => {
-    btn.addEventListener("click", () => setTab(btn.getAttribute("data-tab")));
-  });
+  fillIcons(document);
+  document.querySelectorAll("#tabs button").forEach((b) => b.addEventListener("click", () => setTab(b.getAttribute("data-tab"))));
   $("#avatar").addEventListener("click", () => setTab("account"));
-  $("#btn-search").addEventListener("click", () => {
-    const bar = $("#searchbar");
-    bar.classList.toggle("on");
-    if (bar.classList.contains("on")) $("#q").focus();
-  });
-  $("#btn-bell").addEventListener("click", () => {
-    state.activityFilter = "notable";
-    setTab("activity");
-  });
-  $("#q").addEventListener("input", (ev) => {
-    state.query = ev.target.value;
-    render();
-  });
-
+  $("#btn-search").addEventListener("click", () => { const bar = $("#searchbar"); bar.classList.toggle("on"); if (bar.classList.contains("on")) $("#q").focus(); });
+  $("#q").addEventListener("input", (ev) => { state.query = ev.target.value; render(); });
   document.addEventListener("click", (ev) => {
     const el = ev.target.closest("[data-pos]");
-    if (el) {
-      ev.preventDefault();
-      openToken(el.getAttribute("data-pos"));
-    }
+    if (el) { ev.preventDefault(); openToken(el.getAttribute("data-pos")); }
   });
   function routeFromHash() {
     const m = location.hash.match(/^#token=(.+)$/);
     if (m) {
-      state.prevTab = state.prevTab || "home";
       state.token = decodeURIComponent(m[1]);
       state.tab = "token";
       Object.entries(views).forEach(([name, el]) => el.classList.toggle("on", name === "token"));
+      document.querySelectorAll("#tabs button").forEach((b) => b.classList.remove("on"));
       render();
     } else if (state.tab === "token") {
       closeToken();
@@ -606,7 +482,6 @@
   }
   window.addEventListener("popstate", routeFromHash);
   routeFromHash();
-
   refresh();
   setInterval(refresh, REFRESH_MS);
 })();

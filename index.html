@@ -3,28 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#050506">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>grokbot-pumpfun</title>
+  <meta name="apple-mobile-web-app-title" content="Grok Desk">
+  <title>Grok Desk · dry-run</title>
   <base href="./">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header id="nav">
-    <button class="av" id="avatar" type="button" aria-label="Account">G</button>
-    <div class="ttl">Grok Bot <span>›</span></div>
-    <button class="ic" id="btn-search" type="button" aria-label="Search">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-    </button>
-    <button class="ic" id="btn-bell" type="button" aria-label="Recent decisions">
-      <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 1 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9"/><path d="M10 21h4"/></svg>
-      <i class="dot hidden" id="bell-dot"></i>
-    </button>
+    <button class="logo" id="avatar" type="button" aria-label="Account"><span data-ico="bot"></span></button>
+    <div class="ttl">
+      <div class="t1">Grok Desk</div>
+      <div class="t2" id="nav-sub">dry-run via grokbot</div>
+    </div>
+    <span class="live" id="live-pill"><i></i><b>Live</b></span>
+    <button class="ic" id="btn-search" type="button" aria-label="Search"><span data-ico="search"></span></button>
   </header>
-  <div id="searchbar">
-    <input id="q" type="search" placeholder="Filter tokens and activity" autocomplete="off">
-  </div>
+  <div id="searchbar"><span data-ico="search"></span><input id="q" type="search" placeholder="Filter tokens and activity" autocomplete="off"></div>
   <div id="demo-banner" class="hidden">DEMO DATA · not real bot trades</div>
   <div id="offline">Cannot reach the dashboard. Retrying…</div>
 
@@ -37,22 +34,10 @@
   </main>
 
   <nav id="tabs">
-    <button type="button" data-tab="home" class="on">
-      <svg viewBox="0 0 24 24"><path d="M4 11.5L12 5l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>
-      Home
-    </button>
-    <button type="button" data-tab="agents">
-      <svg viewBox="0 0 24 24"><circle cx="8" cy="9" r="2.4"/><circle cx="16" cy="9" r="2.4"/><circle cx="12" cy="16" r="2.4"/></svg>
-      Agents
-    </button>
-    <button type="button" data-tab="activity">
-      <svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h10"/></svg>
-      Activity
-    </button>
-    <button type="button" data-tab="account">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 19c1.5-3.2 4-4.8 7-4.8s5.5 1.6 7 4.8"/></svg>
-      Account
-    </button>
+    <button type="button" data-tab="home" class="on"><span data-ico="home"></span>Home</button>
+    <button type="button" data-tab="agents"><span data-ico="cpu"></span>Agents</button>
+    <button type="button" data-tab="activity"><span data-ico="activity"></span>Activity</button>
+    <button type="button" data-tab="account"><span data-ico="user"></span>Account</button>
   </nav>
 
   <script src="app.js"></script>

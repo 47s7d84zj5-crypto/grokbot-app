@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T22:56:37.833599+01:00",
+  "generated_at": "2026-11-12T23:01:42.486833+01:00",
   "timezone": "Europe/Budapest",
   "mode": "dry-run",
   "label": "simulated / dry-run",
@@ -7,8 +7,8 @@
   "monitor_connected": true,
   "starting_balance_sol": 10.0,
   "balance_sol": 10.0,
-  "balance_usd": 814.6,
-  "sol_usd": 81.46,
+  "balance_usd": 814.2,
+  "sol_usd": 81.42,
   "realized_sol": 0.0,
   "unrealized_sol": 0.0,
   "pnl_today_sol": 0.0,
@@ -20,92 +20,92 @@
     "LIVE": {
       "points": [
         {
-          "t": 1794519697.833599,
+          "t": 1794520002.486833,
           "v": 10.0
         },
         {
-          "t": 1794520597.833599,
+          "t": 1794520902.486833,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794519697.833599,
-      "to": 1794520597.833599
+      "from": 1794520002.486833,
+      "to": 1794520902.486833
     },
     "1H": {
       "points": [
         {
-          "t": 1794516997.833599,
+          "t": 1794517302.486833,
           "v": 10.0
         },
         {
-          "t": 1794520597.833599,
+          "t": 1794520902.486833,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794516997.833599,
-      "to": 1794520597.833599
+      "from": 1794517302.486833,
+      "to": 1794520902.486833
     },
     "4H": {
       "points": [
         {
-          "t": 1794506197.833599,
+          "t": 1794506502.486833,
           "v": 10.0
         },
         {
-          "t": 1794520597.833599,
+          "t": 1794520902.486833,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794506197.833599,
-      "to": 1794520597.833599
+      "from": 1794506502.486833,
+      "to": 1794520902.486833
     },
     "1D": {
       "points": [
         {
-          "t": 1794434197.833599,
+          "t": 1794434502.486833,
           "v": 10.0
         },
         {
-          "t": 1794520597.833599,
+          "t": 1794520902.486833,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794434197.833599,
-      "to": 1794520597.833599
+      "from": 1794434502.486833,
+      "to": 1794520902.486833
     },
     "1W": {
       "points": [
         {
-          "t": 1793915797.833599,
+          "t": 1793916102.486833,
           "v": 10.0
         },
         {
-          "t": 1794520597.833599,
+          "t": 1794520902.486833,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1793915797.833599,
-      "to": 1794520597.833599
+      "from": 1793916102.486833,
+      "to": 1794520902.486833
     },
     "ALL": {
       "points": [
         {
-          "t": 1794520597.833599,
+          "t": 1794520902.486833,
           "v": 10.0
         },
         {
-          "t": 1794520597.833599,
+          "t": 1794520902.486833,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794520597.833599,
-      "to": 1794520597.833599
+      "from": 1794520902.486833,
+      "to": 1794520902.486833
     }
   },
   "agents": [
@@ -116,9 +116,16 @@
       "running": true,
       "accent": "cyan",
       "headline": "480 tokens",
-      "sub": "19 waiting · 421 skipped",
+      "sub": "33 waiting · 421 skipped",
       "items": [
         {
+          "symbol": "cigarette",
+          "detail": "3 traders",
+          "tone": "wait",
+          "url": null,
+          "mint": null
+        },
+        {
           "symbol": "STARSHIP",
           "detail": "3 traders",
           "tone": "wait",
@@ -126,36 +133,22 @@
           "mint": null
         },
         {
-          "symbol": "X",
-          "detail": "4 traders",
-          "tone": "wait",
-          "url": null,
-          "mint": null
-        },
-        {
-          "symbol": "STARSHIP",
+          "symbol": "FROG",
           "detail": "3 traders",
           "tone": "wait",
           "url": null,
           "mint": null
         },
         {
-          "symbol": "INTRN",
-          "detail": "3 traders",
-          "tone": "wait",
-          "url": null,
-          "mint": null
-        },
-        {
-          "symbol": "MW2",
+          "symbol": "STORIES",
           "detail": "2 traders",
           "tone": "wait",
           "url": null,
           "mint": null
         },
         {
-          "symbol": "H20",
-          "detail": "4 traders",
+          "symbol": "STARSHIP",
+          "detail": "3 traders",
           "tone": "wait",
           "url": null,
           "mint": null
@@ -168,8 +161,15 @@
           "mint": null
         },
         {
-          "symbol": "CONNECT",
-          "detail": "1 trader",
+          "symbol": "ZADDY",
+          "detail": "3 traders",
+          "tone": "wait",
+          "url": null,
+          "mint": null
+        },
+        {
+          "symbol": "BABYHUG",
+          "detail": "4 traders",
           "tone": "wait",
           "url": null,
           "mint": null
@@ -4953,55 +4953,127 @@
   "closed_positions": [],
   "balance_history": [
     {
-      "t": 1794520597.833599,
+      "t": 1794520902.486833,
       "sol": 10.0,
-      "usd": 814.6
+      "usd": 814.2
     },
     {
-      "t": 1794520597.833599,
+      "t": 1794520902.486833,
       "sol": 10.0,
-      "usd": 814.6
+      "usd": 814.2
     }
   ],
   "waiting": [
     {
-      "symbol": "STARSHIP",
+      "symbol": "cigarette",
       "mint": null,
-      "prefix": "bUEcRrqU",
+      "prefix": "46PH4MqV",
       "traders": 3,
-      "ts": "2026-11-12T22:56:25+01:00",
-      "url": null
-    },
-    {
-      "symbol": "X",
-      "mint": null,
-      "prefix": "5xxJmJxh",
-      "traders": 4,
-      "ts": "2026-11-12T22:56:11+01:00",
+      "ts": "2026-11-12T23:01:39+01:00",
       "url": null
     },
     {
       "symbol": "STARSHIP",
       "mint": null,
-      "prefix": "9xEpFAd4",
+      "prefix": "QyNJeJcp",
       "traders": 3,
-      "ts": "2026-11-12T22:56:11+01:00",
+      "ts": "2026-11-12T23:01:39+01:00",
       "url": null
     },
     {
-      "symbol": "INTRN",
+      "symbol": "FROG",
       "mint": null,
-      "prefix": "4qFMbxqa",
+      "prefix": "9EJUpET5",
       "traders": 3,
-      "ts": "2026-11-12T22:56:11+01:00",
+      "ts": "2026-11-12T23:01:39+01:00",
       "url": null
     },
     {
-      "symbol": "MW2",
+      "symbol": "STORIES",
       "mint": null,
-      "prefix": "61RYTHTx",
+      "prefix": "D4MzwNRX",
       "traders": 2,
-      "ts": "2026-11-12T22:56:11+01:00",
+      "ts": "2026-11-12T23:01:39+01:00",
+      "url": null
+    },
+    {
+      "symbol": "STARSHIP",
+      "mint": null,
+      "prefix": "B4PnRPFz",
+      "traders": 3,
+      "ts": "2026-11-12T23:01:39+01:00",
+      "url": null
+    },
+    {
+      "symbol": "STARSHIP",
+      "mint": null,
+      "prefix": "JEFgd7LS",
+      "traders": 3,
+      "ts": "2026-11-12T23:01:22+01:00",
+      "url": null
+    },
+    {
+      "symbol": "ZADDY",
+      "mint": null,
+      "prefix": "7GuR9ony",
+      "traders": 3,
+      "ts": "2026-11-12T23:01:22+01:00",
+      "url": null
+    },
+    {
+      "symbol": "BABYHUG",
+      "mint": null,
+      "prefix": "BrdMKHN7",
+      "traders": 4,
+      "ts": "2026-11-12T23:01:22+01:00",
+      "url": null
+    },
+    {
+      "symbol": "Sharia",
+      "mint": null,
+      "prefix": "HvBhwUMh",
+      "traders": 1,
+      "ts": "2026-11-12T23:01:22+01:00",
+      "url": null
+    },
+    {
+      "symbol": "BUTTIGIEG",
+      "mint": null,
+      "prefix": "58ZGdbo1",
+      "traders": 3,
+      "ts": "2026-11-12T23:01:22+01:00",
+      "url": null
+    },
+    {
+      "symbol": "GPGY",
+      "mint": null,
+      "prefix": "EnTATUQT",
+      "traders": 3,
+      "ts": "2026-11-12T23:01:11+01:00",
+      "url": null
+    },
+    {
+      "symbol": "STARSHIP",
+      "mint": null,
+      "prefix": "vRFJQSi2",
+      "traders": 3,
+      "ts": "2026-11-12T23:01:11+01:00",
+      "url": null
+    },
+    {
+      "symbol": "JENSEN",
+      "mint": null,
+      "prefix": "FHxNT38A",
+      "traders": 1,
+      "ts": "2026-11-12T23:01:11+01:00",
+      "url": null
+    },
+    {
+      "symbol": "BOBBLY",
+      "mint": null,
+      "prefix": "22Cx1fpE",
+      "traders": 2,
+      "ts": "2026-11-12T23:01:11+01:00",
       "url": null
     },
     {
@@ -5009,7 +5081,7 @@
       "mint": null,
       "prefix": "J5S8ocDu",
       "traders": 4,
-      "ts": "2026-11-12T22:56:01+01:00",
+      "ts": "2026-11-12T22:57:14+01:00",
       "url": null
     },
     {
@@ -5017,7 +5089,7 @@
       "mint": null,
       "prefix": "sL3836bv",
       "traders": 3,
-      "ts": "2026-11-12T22:56:01+01:00",
+      "ts": "2026-11-12T22:57:14+01:00",
       "url": null
     },
     {
@@ -5025,7 +5097,47 @@
       "mint": null,
       "prefix": "Fm7JUDw8",
       "traders": 1,
-      "ts": "2026-11-12T22:56:01+01:00",
+      "ts": "2026-11-12T22:57:14+01:00",
+      "url": null
+    },
+    {
+      "symbol": "STARSHIP",
+      "mint": null,
+      "prefix": "bUEcRrqU",
+      "traders": 3,
+      "ts": "2026-11-12T22:56:59+01:00",
+      "url": null
+    },
+    {
+      "symbol": "X",
+      "mint": null,
+      "prefix": "5xxJmJxh",
+      "traders": 4,
+      "ts": "2026-11-12T22:56:48+01:00",
+      "url": null
+    },
+    {
+      "symbol": "STARSHIP",
+      "mint": null,
+      "prefix": "9xEpFAd4",
+      "traders": 3,
+      "ts": "2026-11-12T22:56:48+01:00",
+      "url": null
+    },
+    {
+      "symbol": "INTRN",
+      "mint": null,
+      "prefix": "4qFMbxqa",
+      "traders": 3,
+      "ts": "2026-11-12T22:56:48+01:00",
+      "url": null
+    },
+    {
+      "symbol": "MW2",
+      "mint": null,
+      "prefix": "61RYTHTx",
+      "traders": 2,
+      "ts": "2026-11-12T22:56:48+01:00",
       "url": null
     },
     {
@@ -5152,6 +5264,6 @@
   "state": {
     "day": "2026-11-12",
     "trades_today": 0,
-    "updated_at": "2026-11-12T22:49:43.453805+01:00"
+    "updated_at": "2026-11-12T22:57:14.733523+01:00"
   }
 }
