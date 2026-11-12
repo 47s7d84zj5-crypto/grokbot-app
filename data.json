@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T22:51:32.665881+01:00",
+  "generated_at": "2026-11-12T22:52:16.800672+01:00",
   "timezone": "Europe/Budapest",
   "mode": "dry-run",
   "label": "simulated / dry-run",
@@ -7,8 +7,8 @@
   "monitor_connected": true,
   "starting_balance_sol": 10.0,
   "balance_sol": 10.0,
-  "balance_usd": 815.5,
-  "sol_usd": 81.55,
+  "balance_usd": 815.1,
+  "sol_usd": 81.51,
   "realized_sol": 0.0,
   "unrealized_sol": 0.0,
   "pnl_today_sol": 0.0,
@@ -20,92 +20,92 @@
     "LIVE": {
       "points": [
         {
-          "t": 1794519392.665881,
+          "t": 1794519436.800672,
           "v": 10.0
         },
         {
-          "t": 1794520292.665881,
+          "t": 1794520336.800672,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794519392.665881,
-      "to": 1794520292.665881
+      "from": 1794519436.800672,
+      "to": 1794520336.800672
     },
     "1H": {
       "points": [
         {
-          "t": 1794516692.665881,
+          "t": 1794516736.800672,
           "v": 10.0
         },
         {
-          "t": 1794520292.665881,
+          "t": 1794520336.800672,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794516692.665881,
-      "to": 1794520292.665881
+      "from": 1794516736.800672,
+      "to": 1794520336.800672
     },
     "4H": {
       "points": [
         {
-          "t": 1794505892.665881,
+          "t": 1794505936.800672,
           "v": 10.0
         },
         {
-          "t": 1794520292.665881,
+          "t": 1794520336.800672,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794505892.665881,
-      "to": 1794520292.665881
+      "from": 1794505936.800672,
+      "to": 1794520336.800672
     },
     "1D": {
       "points": [
         {
-          "t": 1794433892.665881,
+          "t": 1794433936.800672,
           "v": 10.0
         },
         {
-          "t": 1794520292.665881,
+          "t": 1794520336.800672,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794433892.665881,
-      "to": 1794520292.665881
+      "from": 1794433936.800672,
+      "to": 1794520336.800672
     },
     "1W": {
       "points": [
         {
-          "t": 1793915492.665881,
+          "t": 1793915536.800672,
           "v": 10.0
         },
         {
-          "t": 1794520292.665881,
+          "t": 1794520336.800672,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1793915492.665881,
-      "to": 1794520292.665881
+      "from": 1793915536.800672,
+      "to": 1794520336.800672
     },
     "ALL": {
       "points": [
         {
-          "t": 1794520292.665881,
+          "t": 1794520336.800672,
           "v": 10.0
         },
         {
-          "t": 1794520292.665881,
+          "t": 1794520336.800672,
           "v": 10.0
         }
       ],
       "marks": [],
-      "from": 1794520292.665881,
-      "to": 1794520292.665881
+      "from": 1794520336.800672,
+      "to": 1794520336.800672
     }
   },
   "agents": [
@@ -115,9 +115,16 @@
       "maps_to": "Monitor",
       "running": true,
       "accent": "cyan",
-      "headline": "476 tokens",
-      "sub": "11 waiting · 420 skipped",
+      "headline": "477 tokens",
+      "sub": "12 waiting · 420 skipped",
       "items": [
+        {
+          "symbol": "STARSHIP",
+          "detail": "3 traders",
+          "tone": "wait",
+          "url": null,
+          "mint": null
+        },
         {
           "symbol": "STARSHIP",
           "detail": "3 traders",
@@ -162,13 +169,6 @@
         },
         {
           "symbol": "JENSEN",
-          "detail": "3 traders",
-          "tone": "wait",
-          "url": null,
-          "mint": null
-        },
-        {
-          "symbol": "STARSHIP",
           "detail": "3 traders",
           "tone": "wait",
           "url": null,
@@ -253,9 +253,17 @@
       "accent": "green",
       "kind": "gauge",
       "headline": "0.00",
-      "sub": "last CASTOR · score below threshold",
+      "sub": "last GB · score below threshold",
       "gauge": 0.0,
       "items": [
+        {
+          "symbol": "GB",
+          "detail": "0.000",
+          "tone": "kill",
+          "url": "https://pump.fun/coin/D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+          "mint": "D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+          "score": 0.0
+        },
         {
           "symbol": "CASTOR",
           "detail": "0.000",
@@ -311,20 +319,12 @@
           "url": "https://pump.fun/coin/44kZrFk41hR8aN4HM8JCVU8jYd3C2sejXDUw32Sspump",
           "mint": "44kZrFk41hR8aN4HM8JCVU8jYd3C2sejXDUw32Sspump",
           "score": 0.0
-        },
-        {
-          "symbol": "KneeHao",
-          "detail": "0.000",
-          "tone": "kill",
-          "url": "https://pump.fun/coin/8nJfsehkKcrWcGke352H5hNZuS3PyScK8WxxXVmNpump",
-          "mint": "8nJfsehkKcrWcGke352H5hNZuS3PyScK8WxxXVmNpump",
-          "score": 0.0
         }
       ],
       "empty": null,
-      "last_symbol": "CASTOR",
-      "last_mint": "WxKJrbv7kPjPfQvxXi57F34ptyQxsiW1LWZUewHpump",
-      "last_url": "https://pump.fun/coin/WxKJrbv7kPjPfQvxXi57F34ptyQxsiW1LWZUewHpump",
+      "last_symbol": "GB",
+      "last_mint": "D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+      "last_url": "https://pump.fun/coin/D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
       "last_score": 0.0,
       "last_reason": "score below threshold"
     },
@@ -336,9 +336,17 @@
       "accent": "pink",
       "kind": "gauge",
       "headline": "0.11",
-      "sub": "last CASTOR · meme score",
+      "sub": "last GB · meme score",
       "gauge": 0.1125,
       "items": [
+        {
+          "symbol": "GB",
+          "detail": "0.113",
+          "tone": "kill",
+          "url": "https://pump.fun/coin/D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+          "mint": "D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+          "score": 0.1125
+        },
         {
           "symbol": "CASTOR",
           "detail": "0.113",
@@ -394,20 +402,12 @@
           "url": "https://pump.fun/coin/44kZrFk41hR8aN4HM8JCVU8jYd3C2sejXDUw32Sspump",
           "mint": "44kZrFk41hR8aN4HM8JCVU8jYd3C2sejXDUw32Sspump",
           "score": 0.25
-        },
-        {
-          "symbol": "KneeHao",
-          "detail": "0.125",
-          "tone": "kill",
-          "url": "https://pump.fun/coin/8nJfsehkKcrWcGke352H5hNZuS3PyScK8WxxXVmNpump",
-          "mint": "8nJfsehkKcrWcGke352H5hNZuS3PyScK8WxxXVmNpump",
-          "score": 0.125
         }
       ],
       "empty": null,
-      "last_symbol": "CASTOR",
-      "last_mint": "WxKJrbv7kPjPfQvxXi57F34ptyQxsiW1LWZUewHpump",
-      "last_url": "https://pump.fun/coin/WxKJrbv7kPjPfQvxXi57F34ptyQxsiW1LWZUewHpump",
+      "last_symbol": "GB",
+      "last_mint": "D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+      "last_url": "https://pump.fun/coin/D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
       "last_score": 0.1125,
       "last_reason": "score below threshold"
     },
@@ -418,10 +418,18 @@
       "running": true,
       "accent": "orange",
       "kind": "gauge",
-      "headline": "0.43",
-      "sub": "last CASTOR · market regime",
-      "gauge": 0.4333,
+      "headline": "0.07",
+      "sub": "last GB · market regime",
+      "gauge": 0.0667,
       "items": [
+        {
+          "symbol": "GB",
+          "detail": "0.067",
+          "tone": "kill",
+          "url": "https://pump.fun/coin/D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+          "mint": "D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+          "score": 0.0667
+        },
         {
           "symbol": "CASTOR",
           "detail": "0.433",
@@ -477,21 +485,13 @@
           "url": "https://pump.fun/coin/44kZrFk41hR8aN4HM8JCVU8jYd3C2sejXDUw32Sspump",
           "mint": "44kZrFk41hR8aN4HM8JCVU8jYd3C2sejXDUw32Sspump",
           "score": 0.1
-        },
-        {
-          "symbol": "KneeHao",
-          "detail": "0.100",
-          "tone": "kill",
-          "url": "https://pump.fun/coin/8nJfsehkKcrWcGke352H5hNZuS3PyScK8WxxXVmNpump",
-          "mint": "8nJfsehkKcrWcGke352H5hNZuS3PyScK8WxxXVmNpump",
-          "score": 0.1
         }
       ],
       "empty": null,
-      "last_symbol": "CASTOR",
-      "last_mint": "WxKJrbv7kPjPfQvxXi57F34ptyQxsiW1LWZUewHpump",
-      "last_url": "https://pump.fun/coin/WxKJrbv7kPjPfQvxXi57F34ptyQxsiW1LWZUewHpump",
-      "last_score": 0.4333,
+      "last_symbol": "GB",
+      "last_mint": "D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+      "last_url": "https://pump.fun/coin/D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+      "last_score": 0.0667,
       "last_reason": "score below threshold"
     },
     {
@@ -530,6 +530,33 @@
   ],
   "agents_running": 8,
   "activity": [
+    {
+      "ts": "2026-11-12T22:52:07.647786+01:00",
+      "ts_unix": 1794520327.647786,
+      "type": "skip",
+      "symbol": "GB",
+      "mint": "D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+      "url": "https://pump.fun/coin/D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+      "stage": "scoring",
+      "stage_label": "Scoring",
+      "reason": "score_below_threshold (0.230 < 0.650)",
+      "reason_label": "score below threshold",
+      "detail": "weakest component audit=0.000",
+      "score_total": 0.2295,
+      "scores": {
+        "audit": 0.0,
+        "narrative": 0.1125,
+        "timing": 0.0667,
+        "metrics": 0.638,
+        "total": 0.2295
+      },
+      "size_sol": null,
+      "pnl_sol": null,
+      "pnl_pct": null,
+      "kind": "skipped",
+      "title": "Skipped GB",
+      "subtitle": "Scoring · score below threshold"
+    },
     {
       "ts": "2026-11-12T22:48:50.328715+01:00",
       "ts_unix": 1794520130.3287146,
@@ -4732,30 +4759,36 @@
       "kind": "skipped",
       "title": "Skipped SpyInu",
       "subtitle": "Scanner · timed out, no traction"
-    },
+    }
+  ],
+  "home_activity": [
     {
-      "ts": "2026-11-12T22:21:20.126441+01:00",
-      "ts_unix": 1794518480.1264405,
+      "ts": "2026-11-12T22:52:07.647786+01:00",
+      "ts_unix": 1794520327.647786,
       "type": "skip",
-      "symbol": "SOCK",
-      "mint": "tWW7jQPZ133PEQN8cfPLfqsAd2fV4exErnt7wBuZ3eJ",
-      "url": "https://pump.fun/coin/tWW7jQPZ133PEQN8cfPLfqsAd2fV4exErnt7wBuZ3eJ",
-      "stage": "monitor",
-      "stage_label": "Scanner",
-      "reason": "stale_no_traction",
-      "reason_label": "timed out, no traction",
-      "detail": null,
-      "score_total": null,
-      "scores": null,
+      "symbol": "GB",
+      "mint": "D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+      "url": "https://pump.fun/coin/D1JzbTQbGyqa9vAocx9d5cv8qVHLJtPgZpw3Sxrfpump",
+      "stage": "scoring",
+      "stage_label": "Scoring",
+      "reason": "score_below_threshold (0.230 < 0.650)",
+      "reason_label": "score below threshold",
+      "detail": "weakest component audit=0.000",
+      "score_total": 0.2295,
+      "scores": {
+        "audit": 0.0,
+        "narrative": 0.1125,
+        "timing": 0.0667,
+        "metrics": 0.638,
+        "total": 0.2295
+      },
       "size_sol": null,
       "pnl_sol": null,
       "pnl_pct": null,
       "kind": "skipped",
-      "title": "Skipped SOCK",
-      "subtitle": "Scanner · timed out, no traction"
-    }
-  ],
-  "home_activity": [
+      "title": "Skipped GB",
+      "subtitle": "Scoring · score below threshold"
+    },
     {
       "ts": "2026-11-12T22:48:50.328715+01:00",
       "ts_unix": 1794520130.3287146,
@@ -4902,44 +4935,31 @@
       "kind": "skipped",
       "title": "Skipped NUMA",
       "subtitle": "Analyzer · curve too thin"
-    },
-    {
-      "ts": "2026-11-12T22:46:02.894971+01:00",
-      "ts_unix": 1794519962.894971,
-      "type": "skip",
-      "symbol": "KneeHao",
-      "mint": "Ci9FRkGBn9A2nTsCmig1LKZ8GgSE59DRuWpF2zzmpump",
-      "url": "https://pump.fun/coin/Ci9FRkGBn9A2nTsCmig1LKZ8GgSE59DRuWpF2zzmpump",
-      "stage": "analyzer",
-      "stage_label": "Analyzer",
-      "reason": "curve_too_thin",
-      "reason_label": "curve too thin",
-      "detail": "risk_score=4.56",
-      "score_total": null,
-      "scores": null,
-      "size_sol": null,
-      "pnl_sol": null,
-      "pnl_pct": null,
-      "kind": "skipped",
-      "title": "Skipped KneeHao",
-      "subtitle": "Analyzer · curve too thin"
     }
   ],
   "open_positions": [],
   "closed_positions": [],
   "balance_history": [
     {
-      "t": 1794520292.665881,
+      "t": 1794520336.800672,
       "sol": 10.0,
-      "usd": 815.5
+      "usd": 815.1
     },
     {
-      "t": 1794520292.665881,
+      "t": 1794520336.800672,
       "sol": 10.0,
-      "usd": 815.5
+      "usd": 815.1
     }
   ],
   "waiting": [
+    {
+      "symbol": "STARSHIP",
+      "mint": null,
+      "prefix": "bUEcRrqU",
+      "traders": 3,
+      "ts": "2026-11-12T22:52:04+01:00",
+      "url": null
+    },
     {
       "symbol": "STARSHIP",
       "mint": null,
@@ -5029,15 +5049,15 @@
       "url": null
     }
   ],
-  "grok_calls_today": 28,
+  "grok_calls_today": 31,
   "kpis": {
-    "tokens_watched": 476,
-    "events": 476,
-    "passed_monitor": 56,
+    "tokens_watched": 477,
+    "events": 477,
+    "passed_monitor": 57,
     "buys": 0,
     "closes": 0,
-    "skips": 476,
-    "today_events": 476
+    "skips": 477,
+    "today_events": 477
   },
   "reasons": [
     {
@@ -5054,7 +5074,7 @@
     },
     {
       "label": "score below threshold",
-      "count": 12
+      "count": 13
     },
     {
       "label": "risk score too high",
